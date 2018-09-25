@@ -69,14 +69,15 @@ class RemoteDevToolsMiddleware<T> extends MiddlewareClass<T>
     var message = {'type': type, 'id': socket.id, 'name': 'flutter'};
 
     if (state != null) {
-      message['payload'] = jsonEncode(state, toEncodable: (dynamic val) {
-        print('toEncodable');
-        print(val);
-      });
+      message['payload'] = jsonEncode(state);
     }
     if (type == 'ACTION') {
-      message['action'] =
-          jsonEncode({'type': getActionType(action), 'payload': action});
+      try {
+        message['action'] =
+            jsonEncode({'type': getActionType(action), 'payload': action});
+      } on Error {
+        message['action'] = jsonEncode({'type': getActionType(action)});
+      }
       message['nextActionId'] = nextActionId;
     } else if (action != null) {
       message['action'] = action as String;
