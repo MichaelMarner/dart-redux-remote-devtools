@@ -107,3 +107,7 @@ The strategy described above should work for most cases. However, if you want to
 ```dart
   var remoteDevtools = RemoteDevToolsMiddleware<AppState>('192.168.1.52:8000', actionEncoder: new MyCoolActionEncoder());
 ```
+
+## Making your actions and state json encodable
+
+You can either write your own `toJson` methods for each of your actions and your state class. However, this quickly becomes cumbersome and error prone. Instead, the recommended way is to make use of the `json_annotation` package to automatically generate toJson functions for you.
