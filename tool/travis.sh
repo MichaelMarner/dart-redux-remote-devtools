@@ -9,20 +9,7 @@ set -e
 
 # Run pub get to fetch packages.
 pub get
-
-# Verify that the libraries are error and warning-free.
-echo "Running dartanalyzer..."
-dartanalyzer $DARTANALYZER_FLAGS \
-  bin/collect_coverage.dart \
-  bin/format_coverage.dart \
-  lib/coverage.dart
-
-# Verify that dartfmt has been run.
-echo "Checking dartfmt..."
-if [[ $(dartfmt -n --set-exit-if-changed lib/ test/) ]]; then
-	echo "Failed dartfmt check: run dartfmt -w lib/ test/"
-	exit 1
-fi
+pub global activate coverage
 
 # Run the tests.
 echo "Running tests..."
@@ -40,14 +27,14 @@ if [ "$COVERALLS_TOKEN" ]; then
     test/test_all.dart &
 
   # Run the coverage collector to generate the JSON coverage report.
-  dart bin/collect_coverage.dart \
+  collect_coverage \
     --port=$OBS_PORT \
     --out=var/coverage.json \
     --wait-paused \
     --resume-isolates
 
   echo "Generating LCOV report..."
-  dart bin/format_coverage.dart \
+  format_coverage \
     --lcov \
     --in=var/coverage.json \
     --out=var/lcov.info \
