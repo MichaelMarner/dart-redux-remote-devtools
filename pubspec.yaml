@@ -1,0 +1,13 @@
+name: redux_remote_devtools
+description: Remote DevTools for Redux.dart
+author: Michael Marner <michael@20papercups.net>
+version: 0.0.1
+dependencies:
+  redux: ^3.0.0
+  redux_dev_tools: ^0.4.0
+  socketcluster_client:
+    path: /Users/michael/code/flutter/socketcluster_client
+dev_dependencies:
+  test: ^1.3.0
+environment:
+  sdk: '>=2.0.0 <3.0.0'
