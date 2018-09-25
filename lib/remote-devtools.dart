@@ -3,6 +3,7 @@ import 'package:socketcluster_client/socketcluster_client.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'dart:convert';
 import 'dart:async';
+import 'action-encoder.dart';
 
 class RemoteDevToolsMiddleware<T> extends MiddlewareClass<T>
     implements BasicListener {
@@ -19,7 +20,10 @@ class RemoteDevToolsMiddleware<T> extends MiddlewareClass<T>
   String channel;
   bool started = false;
 
-  RemoteDevToolsMiddleware(this.host);
+  ActionEncoder actionEncoder;
+
+  RemoteDevToolsMiddleware(this.host,
+      [this.actionEncoder = const JsonActionEncoder()]);
 
   onAuthentication(Socket s, bool status) {
     print('onAuthentication');
@@ -72,12 +76,7 @@ class RemoteDevToolsMiddleware<T> extends MiddlewareClass<T>
       message['payload'] = jsonEncode(state);
     }
     if (type == 'ACTION') {
-      try {
-        message['action'] =
-            jsonEncode({'type': getActionType(action), 'payload': action});
-      } on Error {
-        message['action'] = jsonEncode({'type': getActionType(action)});
-      }
+      message['action'] = this.actionEncoder.encode(action);
       message['nextActionId'] = nextActionId;
     } else if (action != null) {
       message['action'] = action as String;
@@ -115,14 +114,6 @@ class RemoteDevToolsMiddleware<T> extends MiddlewareClass<T>
     print(action);
     if (started && !(action is DevToolsAction)) {
       this.relay('ACTION', store.state as T, action);
-    }
-  }
-
-  String getActionType(dynamic action) {
-    try {
-      return action.runtimeType.toString();
-    } on Exception {
-      return action.toString();
     }
   }
 }
