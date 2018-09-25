@@ -33,10 +33,9 @@ class JsonActionEncoder extends ActionEncoder {
 
   /// Gets a type name for the action, based on the class name or value
   String getActionType(dynamic action) {
-    try {
+    if (action.toString().contains('Instance of')) {
       return action.runtimeType.toString();
-    } on Exception {
-      return action.toString();
     }
+    return action.toString();
   }
 }
