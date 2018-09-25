@@ -1,4 +1,4 @@
-import 'dart:convert';
+part of remote_devtools;
 
 /// Interface for custom action encoding logic
 abstract class ActionEncoder {

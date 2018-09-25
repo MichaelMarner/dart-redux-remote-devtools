@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import '../lib/action-encoder.dart';
+import '../lib/remote-devtools.dart';
 
 class TestAction {}
 
