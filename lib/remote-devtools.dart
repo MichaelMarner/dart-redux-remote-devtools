@@ -56,7 +56,7 @@ class RemoteDevToolsMiddleware<T> extends MiddlewareClass<T>
     this.relay('START');
     started = true;
     this.socket.on(channel, (String name, dynamic data) {
-      this.handleRemoteAction(data as Map<String, dynamic>);
+      this.handleEventFromRemote(data as Map<String, dynamic>);
     });
   }
 
@@ -84,7 +84,7 @@ class RemoteDevToolsMiddleware<T> extends MiddlewareClass<T>
     socket.emit(this.socket.id != null ? 'log' : 'log-noid', message);
   }
 
-  void handleRemoteAction(Map<String, dynamic> data) {
+  void handleEventFromRemote(Map<String, dynamic> data) {
     print(data);
     switch (data['type'] as String) {
       case 'DISPATCH':
@@ -105,10 +105,7 @@ class RemoteDevToolsMiddleware<T> extends MiddlewareClass<T>
     }
   }
 
-  /**
-   * Middleware function called automatically by Redux
-   * when an action is dispatched.
-   */
+  /// Middleware function called by redux, dispatches actions to devtools
   call(Store<dynamic> store, dynamic action, NextDispatcher next) {
     next(action);
     print(action);
