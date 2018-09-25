@@ -95,3 +95,15 @@ Would appear in devtools as:
 ```
 
 This of course means your Actions need to be json encodable. You can do what the example above does and write your own `toJson` method. However, a better approach is to use a generator to do it for you. If your action is not json encodable, the payload property will be missing in devtools.
+
+### Encoding strategy for State
+
+For state, we simply attempt to `jsonEncode` the entire thing. If your state cannot be converted, then state updates will not appear in devtools.
+
+### Overriding these strategies
+
+The strategy described above should work for most cases. However, if you want to do something different, you can replace the `ActionEncoder` and `StateEncoder` with your own classes:
+
+```dart
+  var remoteDevtools = RemoteDevToolsMiddleware<AppState>('192.168.1.52:8000', actionEncoder: new MyCoolActionEncoder());
+```
