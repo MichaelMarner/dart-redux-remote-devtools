@@ -5,6 +5,8 @@
 Work in progress getting the Javascript Redux Remote Devtools working with Dart
 and Flutter. Not to be used by anybody (yet)
 
+![Devtools Demo](https://github.com/MichaelMarner/dart-redux-remote-devtools/raw/master/doc/assets/DartReduxDemo.gif)
+
 ## Installation
 
 Add the library to pubspec.yaml. The package is not available on pub yet, so use the git repo instead.
