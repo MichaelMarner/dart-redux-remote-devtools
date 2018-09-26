@@ -7,4 +7,5 @@ import 'dart:convert';
 import 'dart:async';
 
 part './src/action-encoder.dart';
+part './src/state-encoder.dart';
 part './src/remote-devtools-middleware.dart';

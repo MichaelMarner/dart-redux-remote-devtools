@@ -16,9 +16,11 @@ class RemoteDevToolsMiddleware<T> extends MiddlewareClass<T>
   bool started = false;
 
   ActionEncoder actionEncoder;
+  StateEncoder<T> stateEncoder;
 
   RemoteDevToolsMiddleware(this.host,
-      [this.actionEncoder = const JsonActionEncoder()]);
+      [this.actionEncoder = const JsonActionEncoder(),
+      this.stateEncoder = const JsonStateEncoder()]);
 
   onAuthentication(Socket s, bool status) {
     print('onAuthentication');
@@ -68,7 +70,7 @@ class RemoteDevToolsMiddleware<T> extends MiddlewareClass<T>
     var message = {'type': type, 'id': socket.id, 'name': 'flutter'};
 
     if (state != null) {
-      message['payload'] = jsonEncode(state);
+      message['payload'] = this.stateEncoder.encode(state);
     }
     if (type == 'ACTION') {
       message['action'] = this.actionEncoder.encode(action);
