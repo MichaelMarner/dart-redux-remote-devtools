@@ -9,9 +9,10 @@ import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:redux_remote_devtools/remote_devtools.dart';
 import './SearchState.dart';
 
+const REMOTE_HOST = '192.168.1.52:8000';
+
 void main() async {
-  var remoteDevtools =
-      RemoteDevToolsMiddleware<SearchState>('192.168.1.52:8000');
+  var remoteDevtools = RemoteDevToolsMiddleware<SearchState>(REMOTE_HOST);
   await remoteDevtools.connect();
   final store = new DevToolsStore<SearchState>(searchReducer,
       initialState: SearchState.initial(),
