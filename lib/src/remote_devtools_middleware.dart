@@ -82,11 +82,10 @@ class RemoteDevToolsMiddleware<T> extends MiddlewareClass<T> {
   }
 
   /// Middleware function called by redux, dispatches actions to devtools
-  call(Store<dynamic> store, dynamic action, NextDispatcher next) {
+  call(Store<T> store, dynamic action, NextDispatcher next) {
     next(action);
-    print(action);
     if (_started && !(action is DevToolsAction)) {
-      this._relay('ACTION', store.state as T, action);
+      this._relay('ACTION', store.state, action);
     }
   }
 }
