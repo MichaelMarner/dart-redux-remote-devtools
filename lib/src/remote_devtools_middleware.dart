@@ -16,40 +16,22 @@ class RemoteDevToolsMiddleware<T> extends MiddlewareClass<T>
   bool started = false;
 
   ActionEncoder actionEncoder;
-  StateEncoder<T> stateEncoder;
+  StateEncoder stateEncoder;
 
   RemoteDevToolsMiddleware(this.host,
       [this.actionEncoder = const JsonActionEncoder(),
       this.stateEncoder = const JsonStateEncoder()]);
 
-  onAuthentication(Socket s, bool status) {
-    print('onAuthentication');
-    print(status);
-  }
-
-  void onConnected(Socket socket) {
-    print('onConnected');
-  }
-
-  void onDisconnected(Socket socket) {
-    print('onDisconnected');
-  }
-
-  void onConnectError(Socket socket, dynamic e) {
-    print('onConnectError');
-    print(e);
-  }
-
-  void onSetAuthToken(String token, Socket socket) {
-    print('onSetAuthToken');
-  }
+  void onAuthentication(Socket s, bool status) {}
+  void onConnected(Socket socket) {}
+  void onDisconnected(Socket socket) {}
+  void onConnectError(Socket socket, dynamic e) {}
+  void onSetAuthToken(String token, Socket socket) {}
 
   connect() async {
     this.socket =
         await Socket.connect('ws://$host/socketcluster/', listener: this);
-    print('Connected to server');
     this.channel = await this.login();
-    print('channel: $channel');
     this.relay('START');
     started = true;
     this.socket.on(channel, (String name, dynamic data) {
