@@ -1,7 +1,6 @@
 part of remote_devtools;
 
-class RemoteDevToolsMiddleware<T> extends MiddlewareClass<T>
-    implements BasicListener {
+class RemoteDevToolsMiddleware<T> extends MiddlewareClass<T> {
   /**
    * The remote-devtools server to connect to. Should include
    * protocol and port if necessary. For example:
@@ -9,47 +8,45 @@ class RemoteDevToolsMiddleware<T> extends MiddlewareClass<T>
    * example.lan:8000
    * 
    */
-  String host;
-  Socket socket;
+  String _host;
+  Socket _socket;
   Store<T> store;
-  String channel;
-  bool started = false;
+  String _channel;
+  bool _started = false;
 
   ActionEncoder actionEncoder;
   StateEncoder stateEncoder;
 
-  RemoteDevToolsMiddleware(this.host,
+  RemoteDevToolsMiddleware(this._host,
       [this.actionEncoder = const JsonActionEncoder(),
-      this.stateEncoder = const JsonStateEncoder()]);
-
-  void onAuthentication(Socket s, bool status) {}
-  void onConnected(Socket socket) {}
-  void onDisconnected(Socket socket) {}
-  void onConnectError(Socket socket, dynamic e) {}
-  void onSetAuthToken(String token, Socket socket) {}
+      this.stateEncoder = const JsonStateEncoder(),
+      this._socket]) {
+    if (_socket == null) {
+      this._socket = new Socket('ws://${this._host}/socketcluster/');
+    }
+  }
 
   connect() async {
-    this.socket =
-        await Socket.connect('ws://$host/socketcluster/', listener: this);
-    this.channel = await this.login();
-    this.relay('START');
-    started = true;
-    this.socket.on(channel, (String name, dynamic data) {
-      this.handleEventFromRemote(data as Map<String, dynamic>);
+    await this._socket.connect();
+    this._channel = await this._login();
+    this._relay('START');
+    _started = true;
+    this._socket.on(_channel, (String name, dynamic data) {
+      this._handleEventFromRemote(data as Map<String, dynamic>);
     });
   }
 
-  Future<String> login() {
+  Future<String> _login() {
     Completer<String> c = new Completer<String>();
-    this.socket.emit('login', 'master',
+    this._socket.emit('login', 'master',
         (String name, dynamic error, dynamic data) {
       c.complete(data as String);
     });
     return c.future;
   }
 
-  relay(String type, [T state, dynamic action, String nextActionId]) {
-    var message = {'type': type, 'id': socket.id, 'name': 'flutter'};
+  _relay(String type, [T state, dynamic action, String nextActionId]) {
+    var message = {'type': type, 'id': _socket.id, 'name': 'flutter'};
 
     if (state != null) {
       message['payload'] = this.stateEncoder.encode(state);
@@ -60,21 +57,21 @@ class RemoteDevToolsMiddleware<T> extends MiddlewareClass<T>
     } else if (action != null) {
       message['action'] = action as String;
     }
-    socket.emit(this.socket.id != null ? 'log' : 'log-noid', message);
+    _socket.emit(this._socket.id != null ? 'log' : 'log-noid', message);
   }
 
-  void handleEventFromRemote(Map<String, dynamic> data) {
+  void _handleEventFromRemote(Map<String, dynamic> data) {
     print(data);
     switch (data['type'] as String) {
       case 'DISPATCH':
-        handleDispatch(data['action']);
+        _handleDispatch(data['action']);
         break;
       default:
         print('Unknown type:' + data['type'].toString());
     }
   }
 
-  void handleDispatch(dynamic action) {
+  void _handleDispatch(dynamic action) {
     switch (action['type'] as String) {
       case 'JUMP_TO_STATE':
         this
@@ -88,8 +85,8 @@ class RemoteDevToolsMiddleware<T> extends MiddlewareClass<T>
   call(Store<dynamic> store, dynamic action, NextDispatcher next) {
     next(action);
     print(action);
-    if (started && !(action is DevToolsAction)) {
-      this.relay('ACTION', store.state as T, action);
+    if (_started && !(action is DevToolsAction)) {
+      this._relay('ACTION', store.state as T, action);
     }
   }
 }
