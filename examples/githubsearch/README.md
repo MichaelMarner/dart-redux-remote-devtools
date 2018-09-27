@@ -24,6 +24,7 @@ This is a copy of the example program from [flutter_redux](https://github.com/br
 
 5.  Run the flutter app
 
+        flutter packages get
         flutter run
 
 6.  Search repos, see the actions fly through devtools
