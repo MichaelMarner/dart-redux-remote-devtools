@@ -106,7 +106,7 @@ For state, we simply attempt to `jsonEncode` the entire thing. If your state can
 The strategy described above should work for most cases. However, if you want to do something different, you can replace the `ActionEncoder` and `StateEncoder` with your own classes:
 
 ```dart
-  var remoteDevtools = RemoteDevToolsMiddleware<AppState>('192.168.1.52:8000', actionEncoder: new MyCoolActionEncoder());
+  var remoteDevtools = RemoteDevToolsMiddleware('192.168.1.52:8000', actionEncoder: new MyCoolActionEncoder());
 ```
 
 ## Making your actions and state json encodable
