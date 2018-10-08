@@ -21,7 +21,7 @@ dependencies:
 Add the middleware to your Redux configuration:
 
 ```dart
-  var remoteDevtools = RemoteDevToolsMiddleware<AppState>('192.168.1.52:8000');
+  var remoteDevtools = RemoteDevToolsMiddleware('192.168.1.52:8000');
   await remoteDevtools.connect();
   final store = new DevToolsStore<AppState>(searchReducer,
       middleware: [
@@ -33,7 +33,7 @@ Add the middleware to your Redux configuration:
 
 ### What's going on here?
 
-1. Create a new instance of the devtools middleware. The middleware is a parameterised type - you need to pass in the type of your redux state. Specify the host and port to connect to.
+1. Create a new instance of the devtools middleware. Specify the host and port to connect to.
 
 1. Wait for devtools to connect to the remotedev server
 
