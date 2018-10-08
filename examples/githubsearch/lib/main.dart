@@ -12,7 +12,7 @@ import './SearchState.dart';
 const REMOTE_HOST = '192.168.1.52:8000';
 
 void main() async {
-  var remoteDevtools = RemoteDevToolsMiddleware<SearchState>(REMOTE_HOST);
+  var remoteDevtools = RemoteDevToolsMiddleware(REMOTE_HOST);
   await remoteDevtools.connect();
   final store = new DevToolsStore<SearchState>(searchReducer,
       initialState: SearchState.initial(),

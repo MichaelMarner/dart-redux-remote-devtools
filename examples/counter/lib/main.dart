@@ -21,7 +21,7 @@ void main() async {
   // Create your store as a final variable in a base Widget. This works better
   // with Hot Reload than creating it directly in the `build` function.
 
-  var remoteDevtools = RemoteDevToolsMiddleware<int>('192.168.1.52:8000');
+  var remoteDevtools = RemoteDevToolsMiddleware('192.168.1.52:8000');
   await remoteDevtools.connect();
   final store = DevToolsStore<int>(counterReducer,
       initialState: 0, middleware: [remoteDevtools]);
