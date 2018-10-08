@@ -1,6 +1,7 @@
 name: redux_remote_devtools
 description: Remote DevTools for Redux.dart
 author: Michael Marner <michael@20papercups.net>
+homepage: https://github.com/MichaelMarner/dart-redux-remote-devtools
 version: 0.0.1
 dependencies:
   redux: ^3.0.0
