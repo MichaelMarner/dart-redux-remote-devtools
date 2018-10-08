@@ -1,4 +1,4 @@
-import '../lib/remote_devtools.dart';
+import '../lib/redux_remote_devtools.dart';
 import 'package:socketcluster_client/socketcluster_client.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';

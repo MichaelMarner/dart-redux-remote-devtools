@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:test/test.dart';
-import '../lib/remote_devtools.dart';
+import '../lib/redux_remote_devtools.dart';
 
 class TestAction {
   int value;
