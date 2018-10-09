@@ -12,8 +12,7 @@ Add the library to pubspec.yaml. The package is not available on pub yet, so use
 
 ```yaml
 dependencies:
-  redux-remote-devtools:
-    git: https://github.com/MichaelMarner/dart-redux-remote-devtools.git
+  redux-remote-devtools: ^0.0.4
 ```
 
 ## Middleware configuration
