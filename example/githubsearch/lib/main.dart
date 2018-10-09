@@ -6,7 +6,7 @@ import 'redux.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_epics/redux_epics.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
-import 'package:redux_remote_devtools/remote_devtools.dart';
+import 'package:redux_remote_devtools/redux_remote_devtools.dart';
 import './SearchState.dart';
 
 const REMOTE_HOST = '192.168.1.52:8000';
