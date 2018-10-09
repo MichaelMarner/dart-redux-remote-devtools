@@ -1,4 +1,4 @@
-part of remote_devtools;
+part of redux_remote_devtools;
 
 class RemoteDevToolsMiddleware extends MiddlewareClass {
   /**
@@ -9,7 +9,7 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
    * 
    */
   String _host;
-  Socket socket;
+  SocketClusterWrapper socket;
   Store store;
   String _channel;
   bool _started = false;
@@ -22,7 +22,8 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
       this.stateEncoder = const JsonStateEncoder(),
       this.socket}) {
     if (socket == null) {
-      this.socket = new Socket('ws://${this._host}/socketcluster/');
+      this.socket =
+          new SocketClusterWrapper('ws://${this._host}/socketcluster/');
     }
   }
 

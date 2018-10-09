@@ -3,7 +3,7 @@ import 'package:socketcluster_client/socketcluster_client.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
-class MockSocket extends Mock implements Socket {}
+class MockSocket extends Mock implements SocketClusterWrapper {}
 
 void main() {
   group('RemoteDevtoolsMiddleware', () {
@@ -15,7 +15,7 @@ void main() {
       });
     });
     group('connect', () {
-      Socket socket;
+      var socket;
       RemoteDevToolsMiddleware devtools;
       setUp(() {
         socket = new MockSocket();

@@ -1,4 +1,4 @@
-part of remote_devtools;
+part of redux_remote_devtools;
 
 /// Interface for custom action encoding logic
 abstract class ActionEncoder {
