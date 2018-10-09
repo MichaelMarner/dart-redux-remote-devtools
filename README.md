@@ -36,15 +36,16 @@ Add the middleware to your Redux configuration:
 
 1. Wait for devtools to connect to the remotedev server
 
-1. Initialise your store. To take advantage of time travel, you should use a `DevToolsStore`. Pass in remoteDevTools with the rest of your middlware
+1. Initialise your store. To take advantage of time travel, you should use a [DevToolsStore](https://pub.dartlang.org/packages/redux_dev_tools). Pass in remoteDevTools with the rest of your middlware
 
 1. The middleware needs a reference to the store you just created, so commands from devtools can be dispatched. So as a final step, set the reference.
 
 ## Using remotedev
 
-Use the Javascript Remote Devtools package. Start the remotedev server on your machine
+Use the Javascript [Remote Devtools](https://github.com/zalmoxisus/remotedev-server) package. Start the remotedev server on your machine
 
 ```bash
+npm install -g remotedev-server
 remotedev --port 8000
 ```
 
