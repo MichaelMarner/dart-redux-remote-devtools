@@ -2,8 +2,8 @@ import '../lib/redux_remote_devtools.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 import 'dart:async';
-import 'dart:convert';
 import 'package:redux/redux.dart';
+import 'package:redux_dev_tools/redux_dev_tools.dart';
 
 class MockSocket extends Mock implements SocketClusterWrapper {}
 
@@ -115,7 +115,16 @@ void main() {
         when(socket.id).thenReturn('testId');
         when(socket.connect()).thenAnswer((_) => new Future.value());
         devtools = RemoteDevToolsMiddleware('example.com', socket: socket);
+        devtools.store = store;
         await devtools.connect();
+      });
+      test('handles time travel', () {
+        var remoteData = {
+          'type': 'DISPATCH',
+          'action': {'type': 'JUMP_TO_STATE', 'index': 4}
+        };
+        devtools.handleEventFromRemote(remoteData);
+        verify(store.dispatch(new DevToolsAction.jumpToState(4)));
       });
     });
   });

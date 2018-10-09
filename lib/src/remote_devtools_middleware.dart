@@ -33,7 +33,7 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
     this._relay('START');
     _started = true;
     this.socket.on(_channel, (String name, dynamic data) {
-      this._handleEventFromRemote(data as Map<String, dynamic>);
+      this.handleEventFromRemote(data as Map<String, dynamic>);
     });
   }
 
@@ -61,8 +61,7 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
     socket.emit(this.socket.id != null ? 'log' : 'log-noid', message);
   }
 
-  void _handleEventFromRemote(Map<String, dynamic> data) {
-    print(data);
+  void handleEventFromRemote(Map<String, dynamic> data) {
     switch (data['type'] as String) {
       case 'DISPATCH':
         _handleDispatch(data['action']);
