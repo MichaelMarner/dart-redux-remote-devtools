@@ -94,7 +94,7 @@ Would appear in devtools as:
 }
 ```
 
-This of course means your Actions need to be json encodable. You can do what the example above does and write your own `toJson` method. However, a better approach is to use a generator to do it for you. If your action is not json encodable, the payload property will be missing in devtools.
+This of course means your Actions need to be json encodable. You can do what the example above does and write your own `toJson` method. However, a better approach is to use a generator like [json_serializable](https://pub.dartlang.org/packages/json_serializable) to do it for you. If your action is not json encodable, the payload property will be missing in devtools.
 
 ### Encoding strategy for State
 
