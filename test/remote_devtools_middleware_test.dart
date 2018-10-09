@@ -99,6 +99,24 @@ void main() {
         verify(next.next(TestActions.SomeAction));
       });
     });
-    group('remote action', () {});
+    group('remote action', () {
+      SocketClusterWrapper socket;
+      RemoteDevToolsMiddleware devtools;
+      Store store;
+      setUp(() async {
+        store = new MockStore();
+        when(store.state).thenReturn({'state': 42});
+        socket = new MockSocket();
+        when(socket.emit("login", "master", captureAny))
+            .thenAnswer((Invocation i) {
+          Function fn = i.positionalArguments[2];
+          fn('testChannel', 'err', 'data');
+        });
+        when(socket.id).thenReturn('testId');
+        when(socket.connect()).thenAnswer((_) => new Future.value());
+        devtools = RemoteDevToolsMiddleware('example.com', socket: socket);
+        await devtools.connect();
+      });
+    });
   });
 }
