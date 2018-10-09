@@ -13,8 +13,6 @@ dependencies:
   redux_dev_tools: ^0.4.0
   redux_remote_devtools:
     path: ../../
-  socketcluster_client:
-    git: https://github.com/MichaelMarner/socketcluster_client.git
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
