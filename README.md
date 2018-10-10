@@ -8,7 +8,7 @@ Redux Remote Devtools support for Dart and Flutter.
 
 ## Installation
 
-Add the library to pubspec.yaml. The package is not available on pub yet, so use the git repo instead.
+Add the library to pubspec.yaml:
 
 ```yaml
 dependencies:
