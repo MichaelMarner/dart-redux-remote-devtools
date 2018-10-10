@@ -126,6 +126,15 @@ void main() {
         devtools.handleEventFromRemote(remoteData);
         verify(store.dispatch(new DevToolsAction.jumpToState(4)));
       });
+      test('Does not dispatch if store has not been sent', () {
+        devtools.store = null;
+        var remoteData = {
+          'type': 'DISPATCH',
+          'action': {'type': 'JUMP_TO_STATE', 'index': 4}
+        };
+        expect(
+            () => devtools.handleEventFromRemote(remoteData), returnsNormally);
+      });
     });
   });
 }

@@ -74,9 +74,13 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
   void _handleDispatch(dynamic action) {
     switch (action['type'] as String) {
       case 'JUMP_TO_STATE':
-        this
-            .store
-            .dispatch(new DevToolsAction.jumpToState(action['index'] as int));
+        if (this.store != null) {
+          this
+              .store
+              .dispatch(new DevToolsAction.jumpToState(action['index'] as int));
+        } else {
+          print('No store reference set, cannot dispatch remote action');
+        }
         break;
     }
   }
