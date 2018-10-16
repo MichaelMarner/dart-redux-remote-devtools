@@ -60,6 +60,31 @@ void main() {
         verify(socket.emit("log",
             {'type': "START", 'id': 'testId', 'name': 'flutter'}, captureAny));
       });
+      test('it sends the state', () async {
+        when(socket.emit("login", "master", captureAny))
+            .thenAnswer((Invocation i) {
+          Function fn = i.positionalArguments[2];
+          fn('testChannel', 'err', 'data');
+        });
+        when(socket.id).thenReturn('testId');
+        var store = MockStore();
+        when(store.state).thenReturn('TEST STATE');
+        devtools.store = store;
+        connectResponse = await devtools.connect();
+        verify(socket.emit("log",
+            {'type': "START", 'id': 'testId', 'name': 'flutter'}, captureAny));
+        verify(socket.emit(
+            "log",
+            {
+              'type': "ACTION",
+              'id': 'testId',
+              'name': 'flutter',
+              'payload': '"TEST STATE"',
+              'action': '{"type":"CONNECT","payload":"CONNECT"}',
+              'nextActionId': null
+            },
+            captureAny));
+      });
     });
     group('call', () {
       SocketClusterWrapper socket;

@@ -35,6 +35,9 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
     this.socket.on(_channel, (String name, dynamic data) {
       this.handleEventFromRemote(data as Map<String, dynamic>);
     });
+    if (this.store != null) {
+      this._relay('ACTION', store.state, 'CONNECT');
+    }
   }
 
   Future<String> _login() {
