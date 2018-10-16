@@ -21,13 +21,12 @@ Add the middleware to your Redux configuration:
 
 ```dart
   var remoteDevtools = RemoteDevToolsMiddleware('192.168.1.52:8000');
-  await remoteDevtools.connect();
   final store = new DevToolsStore<AppState>(searchReducer,
       middleware: [
         remoteDevtools,
       ]);
-
   remoteDevtools.store = store;
+  await remoteDevtools.connect();
 ```
 
 ### What's going on here?
