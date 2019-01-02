@@ -3,19 +3,19 @@ part of redux_remote_devtools;
 /// The connection state of the middleware
 enum RemoteDevToolsStatus {
   /// No socket connection to the remote host
-  NOT_CONNECTED,
+  notConnected,
 
   /// Attempting to open socket
-  CONNECTING,
+  connecting,
 
   /// Connected to remote, but not started
-  CONNECTED,
+  connected,
 
   /// Awating start response
-  STARTING,
+  starting,
 
   /// Sending and receiving actions
-  STARTED
+  started
 }
 
 class RemoteDevToolsMiddleware extends MiddlewareClass {
@@ -30,7 +30,7 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
   SocketClusterWrapper socket;
   Store store;
   String _channel;
-  RemoteDevToolsStatus status = RemoteDevToolsStatus.NOT_CONNECTED;
+  RemoteDevToolsStatus status = RemoteDevToolsStatus.notConnected;
 
   ActionEncoder actionEncoder;
   StateEncoder stateEncoder;
@@ -45,11 +45,11 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
   }
 
   connect() async {
-    _setStatus(RemoteDevToolsStatus.CONNECTING);
+    _setStatus(RemoteDevToolsStatus.connecting);
     await this.socket.connect();
-    _setStatus(RemoteDevToolsStatus.CONNECTED);
+    _setStatus(RemoteDevToolsStatus.connected);
     this._channel = await this._login();
-    _setStatus(RemoteDevToolsStatus.STARTING);
+    _setStatus(RemoteDevToolsStatus.starting);
     this._relay('START');
     this.socket.on(_channel, (String name, dynamic data) {
       this.handleEventFromRemote(data as Map<String, dynamic>);
@@ -89,7 +89,7 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
         break;
       // The START action is a response indicating that remote devtools is up and running
       case 'START':
-        _setStatus(RemoteDevToolsStatus.STARTED);
+        _setStatus(RemoteDevToolsStatus.started);
         break;
       default:
         print('Unknown type:' + data['type'].toString());
@@ -111,7 +111,7 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
   /// Middleware function called by redux, dispatches actions to devtools
   call(Store store, dynamic action, NextDispatcher next) {
     next(action);
-    if (this.status == RemoteDevToolsStatus.STARTED && !(action is DevToolsAction)) {
+    if (this.status == RemoteDevToolsStatus.started && !(action is DevToolsAction)) {
       this._relay('ACTION', store.state, action);
     }
   }

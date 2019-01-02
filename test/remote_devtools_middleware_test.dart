@@ -116,7 +116,7 @@ void main() {
             captureAny));
       });
       test('the action and state are sent', () {
-        devtools.status = RemoteDevToolsStatus.STARTED;
+        devtools.status = RemoteDevToolsStatus.started;
         devtools.call(store, TestActions.SomeAction, next.next);
         verify(socket.emit(
             'log',
@@ -157,9 +157,9 @@ void main() {
         var remoteData = {
           'type': 'START',
         };
-        expect(devtools.status, RemoteDevToolsStatus.STARTING);
+        expect(devtools.status, RemoteDevToolsStatus.starting);
         devtools.handleEventFromRemote(remoteData);
-        expect(devtools.status, RemoteDevToolsStatus.STARTED);
+        expect(devtools.status, RemoteDevToolsStatus.started);
       });
       test('handles time travel', () {
         var remoteData = {
