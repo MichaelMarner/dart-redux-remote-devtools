@@ -1,5 +1,9 @@
 # Redux Remote Devtools
 
+## 0.0.6
+
+- Correctly handle the START response message
+
 ## 0.0.5
 
 - Send current state to devtools on connect
