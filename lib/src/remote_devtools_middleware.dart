@@ -32,11 +32,13 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
   String _channel;
   RemoteDevToolsStatus status = RemoteDevToolsStatus.notConnected;
 
+  ActionDecoder actionDecoder;
   ActionEncoder actionEncoder;
   StateEncoder stateEncoder;
 
   RemoteDevToolsMiddleware(this._host,
-      {this.actionEncoder = const JsonActionEncoder(),
+      {this.actionDecoder = const NOPActionDecoder(),
+      this.actionEncoder = const JsonActionEncoder(),
       this.stateEncoder = const JsonStateEncoder(),
       this.socket}) {
     if (socket == null) {
@@ -101,14 +103,16 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
   }
 
   void _handleDispatch(dynamic action) {
+    if (this.store == null) {
+      print('No store reference set, cannot dispatch remote action');
+      return;
+    }
     switch (action['type'] as String) {
       case 'JUMP_TO_STATE':
-        if (this.store != null) {
-          this.store.dispatch(new DevToolsAction.jumpToState(action['index'] as int));
-        } else {
-          print('No store reference set, cannot dispatch remote action');
-        }
+        this.store.dispatch(new DevToolsAction.jumpToState(action['index'] as int));
         break;
+      default:
+        this.store.dispatch(new DevToolsAction.perform(this.actionDecoder.decode(action)));
     }
   }
 

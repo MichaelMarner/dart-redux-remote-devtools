@@ -169,6 +169,14 @@ void main() {
         devtools.handleEventFromRemote(remoteData);
         verify(store.dispatch(new DevToolsAction.jumpToState(4)));
       });
+      test('Dispatches arbitrary remote actions', () {
+        var remoteData = {
+          'type': 'DISPATCH',
+          'action': {'type': 'TEST ACTION', 'value': 12}
+        };
+        devtools.handleEventFromRemote(remoteData);
+        verify(store.dispatch(new DevToolsAction.perform(remoteData['action'])));
+      });
       test('Does not dispatch if store has not been sent', () {
         devtools.store = null;
         var remoteData = {
