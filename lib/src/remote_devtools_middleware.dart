@@ -1,5 +1,23 @@
 part of redux_remote_devtools;
 
+/// The connection state of the middleware
+enum RemoteDevToolsStatus {
+  /// No socket connection to the remote host
+  NOT_CONNECTED,
+
+  /// Attempting to open socket
+  CONNECTING,
+
+  /// Connected to remote, but not started
+  CONNECTED,
+
+  /// Awating start response
+  STARTING,
+
+  /// Sending and receiving actions
+  STARTED
+}
+
 class RemoteDevToolsMiddleware extends MiddlewareClass {
   /**
    * The remote-devtools server to connect to. Should include
@@ -12,7 +30,7 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
   SocketClusterWrapper socket;
   Store store;
   String _channel;
-  bool _started = false;
+  RemoteDevToolsStatus status = RemoteDevToolsStatus.NOT_CONNECTED;
 
   ActionEncoder actionEncoder;
   StateEncoder stateEncoder;
@@ -22,16 +40,17 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
       this.stateEncoder = const JsonStateEncoder(),
       this.socket}) {
     if (socket == null) {
-      this.socket =
-          new SocketClusterWrapper('ws://${this._host}/socketcluster/');
+      this.socket = new SocketClusterWrapper('ws://${this._host}/socketcluster/');
     }
   }
 
   connect() async {
+    _setStatus(RemoteDevToolsStatus.CONNECTING);
     await this.socket.connect();
+    _setStatus(RemoteDevToolsStatus.CONNECTED);
     this._channel = await this._login();
+    _setStatus(RemoteDevToolsStatus.STARTING);
     this._relay('START');
-    _started = true;
     this.socket.on(_channel, (String name, dynamic data) {
       this.handleEventFromRemote(data as Map<String, dynamic>);
     });
@@ -42,8 +61,7 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
 
   Future<String> _login() {
     Completer<String> c = new Completer<String>();
-    this.socket.emit('login', 'master',
-        (String name, dynamic error, dynamic data) {
+    this.socket.emit('login', 'master', (String name, dynamic error, dynamic data) {
       c.complete(data as String);
     });
     return c.future;
@@ -69,6 +87,10 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
       case 'DISPATCH':
         _handleDispatch(data['action']);
         break;
+      // The START action is a response indicating that remote devtools is up and running
+      case 'START':
+        _setStatus(RemoteDevToolsStatus.STARTED);
+        break;
       default:
         print('Unknown type:' + data['type'].toString());
     }
@@ -78,9 +100,7 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
     switch (action['type'] as String) {
       case 'JUMP_TO_STATE':
         if (this.store != null) {
-          this
-              .store
-              .dispatch(new DevToolsAction.jumpToState(action['index'] as int));
+          this.store.dispatch(new DevToolsAction.jumpToState(action['index'] as int));
         } else {
           print('No store reference set, cannot dispatch remote action');
         }
@@ -91,8 +111,12 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
   /// Middleware function called by redux, dispatches actions to devtools
   call(Store store, dynamic action, NextDispatcher next) {
     next(action);
-    if (_started && !(action is DevToolsAction)) {
+    if (this.status == RemoteDevToolsStatus.STARTED && !(action is DevToolsAction)) {
       this._relay('ACTION', store.state, action);
     }
+  }
+
+  _setStatus(RemoteDevToolsStatus value) {
+    this.status = value;
   }
 }

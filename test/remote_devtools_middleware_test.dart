@@ -41,8 +41,7 @@ void main() {
       test('it sends the login message', () async {
         when(socket.connect()).thenAnswer((_) => new Future.value());
         when(socket.id).thenReturn('testId');
-        when(socket.emit("login", "master", captureAny))
-            .thenAnswer((Invocation i) {
+        when(socket.emit("login", "master", captureAny)).thenAnswer((Invocation i) {
           Function fn = i.positionalArguments[2];
           fn('testChannel', 'err', 'data');
         });
@@ -50,19 +49,17 @@ void main() {
         verify(socket.emit("login", "master", captureAny));
       });
       test('it sends the start message message', () async {
-        when(socket.emit("login", "master", captureAny))
-            .thenAnswer((Invocation i) {
+        when(socket.emit("login", "master", captureAny)).thenAnswer((Invocation i) {
           Function fn = i.positionalArguments[2];
           fn('testChannel', 'err', 'data');
         });
         when(socket.id).thenReturn('testId');
         connectResponse = await devtools.connect();
-        verify(socket.emit("log",
-            {'type': "START", 'id': 'testId', 'name': 'flutter'}, captureAny));
+        verify(
+            socket.emit("log", {'type': "START", 'id': 'testId', 'name': 'flutter'}, captureAny));
       });
       test('it sends the state', () async {
-        when(socket.emit("login", "master", captureAny))
-            .thenAnswer((Invocation i) {
+        when(socket.emit("login", "master", captureAny)).thenAnswer((Invocation i) {
           Function fn = i.positionalArguments[2];
           fn('testChannel', 'err', 'data');
         });
@@ -71,8 +68,8 @@ void main() {
         when(store.state).thenReturn('TEST STATE');
         devtools.store = store;
         connectResponse = await devtools.connect();
-        verify(socket.emit("log",
-            {'type': "START", 'id': 'testId', 'name': 'flutter'}, captureAny));
+        verify(
+            socket.emit("log", {'type': "START", 'id': 'testId', 'name': 'flutter'}, captureAny));
         verify(socket.emit(
             "log",
             {
@@ -95,8 +92,7 @@ void main() {
         store = new MockStore();
         when(store.state).thenReturn({'state': 42});
         socket = new MockSocket();
-        when(socket.emit("login", "master", captureAny))
-            .thenAnswer((Invocation i) {
+        when(socket.emit("login", "master", captureAny)).thenAnswer((Invocation i) {
           Function fn = i.positionalArguments[2];
           fn('testChannel', 'err', 'data');
         });
@@ -105,7 +101,22 @@ void main() {
         devtools = RemoteDevToolsMiddleware('example.com', socket: socket);
         await devtools.connect();
       });
+      test('nothing sent if status is not started', () {
+        devtools.call(store, TestActions.SomeAction, next.next);
+        verifyNever(socket.emit(
+            'log',
+            {
+              'type': 'ACTION',
+              'id': 'testId',
+              'name': 'flutter',
+              'payload': '{"state":42}',
+              'action': '{"type":"TestActions.SomeAction"}',
+              'nextActionId': null
+            },
+            captureAny));
+      });
       test('the action and state are sent', () {
+        devtools.status = RemoteDevToolsStatus.STARTED;
         devtools.call(store, TestActions.SomeAction, next.next);
         verify(socket.emit(
             'log',
@@ -132,8 +143,7 @@ void main() {
         store = new MockStore();
         when(store.state).thenReturn({'state': 42});
         socket = new MockSocket();
-        when(socket.emit("login", "master", captureAny))
-            .thenAnswer((Invocation i) {
+        when(socket.emit("login", "master", captureAny)).thenAnswer((Invocation i) {
           Function fn = i.positionalArguments[2];
           fn('testChannel', 'err', 'data');
         });
@@ -142,6 +152,14 @@ void main() {
         devtools = RemoteDevToolsMiddleware('example.com', socket: socket);
         devtools.store = store;
         await devtools.connect();
+      });
+      test('START response sets status to STARTED', () {
+        var remoteData = {
+          'type': 'START',
+        };
+        expect(devtools.status, RemoteDevToolsStatus.STARTING);
+        devtools.handleEventFromRemote(remoteData);
+        expect(devtools.status, RemoteDevToolsStatus.STARTED);
       });
       test('handles time travel', () {
         var remoteData = {
@@ -157,8 +175,7 @@ void main() {
           'type': 'DISPATCH',
           'action': {'type': 'JUMP_TO_STATE', 'index': 4}
         };
-        expect(
-            () => devtools.handleEventFromRemote(remoteData), returnsNormally);
+        expect(() => devtools.handleEventFromRemote(remoteData), returnsNormally);
       });
     });
   });
