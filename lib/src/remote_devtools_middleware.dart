@@ -71,7 +71,11 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
     var message = {'type': type, 'id': socket.id, 'name': 'flutter'};
 
     if (state != null) {
-      message['payload'] = this.stateEncoder.encode(state);
+      try {
+        message['payload'] = this.stateEncoder.encode(state);
+      } catch (error) {
+        message['payload'] = 'Could not encode state. Ensure state is json encodable';
+      }
     }
     if (type == 'ACTION') {
       message['action'] = this.actionEncoder.encode(action);
