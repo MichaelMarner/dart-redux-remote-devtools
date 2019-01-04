@@ -23,6 +23,8 @@ void main() async {
 
   remoteDevtools.store = store;
 
+  remoteDevtools.connect();
+
   runApp(new RxDartGithubSearchApp(
     store: store,
   ));
