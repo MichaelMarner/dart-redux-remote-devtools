@@ -99,6 +99,9 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
       case 'START':
         _setStatus(RemoteDevToolsStatus.started);
         break;
+      case 'ACTION':
+        _handleRemoteAction(data['action'] as String);
+        break;
       default:
         print('Unknown type:' + data['type'].toString());
     }
@@ -114,8 +117,17 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
         this.store.dispatch(new DevToolsAction.jumpToState(action['index'] as int));
         break;
       default:
-        this.store.dispatch(new DevToolsAction.perform(this.actionDecoder.decode(action)));
+        print("Unknown commans: ${action['type']}. Ignoring");
     }
+  }
+
+  void _handleRemoteAction(String action) {
+    if (this.store == null) {
+      print('No store reference set, cannot dispatch remote action');
+      return;
+    }
+    var actionMap = jsonDecode(action);
+    this.store.dispatch(new DevToolsAction.perform(this.actionDecoder.decode(actionMap)));
   }
 
   /// Middleware function called by redux, dispatches actions to devtools
