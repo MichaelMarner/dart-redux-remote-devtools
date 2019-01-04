@@ -36,11 +36,13 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
   ActionEncoder actionEncoder;
   StateEncoder stateEncoder;
 
-  RemoteDevToolsMiddleware(this._host,
-      {this.actionDecoder = const NOPActionDecoder(),
-      this.actionEncoder = const JsonActionEncoder(),
-      this.stateEncoder = const JsonStateEncoder(),
-      this.socket}) {
+  RemoteDevToolsMiddleware(
+    this._host, {
+    this.actionDecoder = const NopActionDecoder(),
+    this.actionEncoder = const JsonActionEncoder(),
+    this.stateEncoder = const JsonStateEncoder(),
+    this.socket,
+  }) {
     if (socket == null) {
       this.socket = new SocketClusterWrapper('ws://${this._host}/socketcluster/');
     }
