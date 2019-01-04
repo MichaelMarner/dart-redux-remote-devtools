@@ -9,8 +9,8 @@ abstract class ActionDecoder {
 }
 
 /// An action decoder that simply passes through the JSON unmodified
-class NOPActionDecoder extends ActionDecoder {
-  const NOPActionDecoder() : super();
+class NopActionDecoder extends ActionDecoder {
+  const NopActionDecoder() : super();
 
   dynamic decode(dynamic action) {
     return action;
