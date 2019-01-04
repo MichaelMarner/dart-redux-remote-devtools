@@ -2,6 +2,7 @@ import '../lib/redux_remote_devtools.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 import 'dart:async';
+import 'dart:convert';
 import 'package:redux/redux.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
 
@@ -170,12 +171,15 @@ void main() {
         verify(store.dispatch(new DevToolsAction.jumpToState(4)));
       });
       test('Dispatches arbitrary remote actions', () {
-        var remoteData = {
-          'type': 'DISPATCH',
-          'action': {'type': 'TEST ACTION', 'value': 12}
-        };
+        var remoteData = {'type': 'ACTION', 'action': '{"type": "TEST ACTION", "value": 12}'};
         devtools.handleEventFromRemote(remoteData);
-        verify(store.dispatch(new DevToolsAction.perform(remoteData['action'])));
+        print(jsonDecode(remoteData['action']));
+        var expected = new DevToolsAction.perform(jsonDecode(remoteData['action']));
+        print(expected);
+        var verifyResult = verify(store.dispatch(captureAny)).captured.first;
+        expect(verifyResult.type, DevToolsActionTypes.PerformAction);
+        expect(verifyResult.appAction['type'], 'TEST ACTION');
+        expect(verifyResult.appAction['value'], 12);
       });
       test('Does not dispatch if store has not been sent', () {
         devtools.store = null;
