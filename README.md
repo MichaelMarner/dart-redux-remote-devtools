@@ -112,6 +112,35 @@ The strategy described above should work for most cases. However, if you want to
 
 You can either write your own `toJson` methods for each of your actions and your state class. However, this quickly becomes cumbersome and error prone. Instead, the recommended way is to make use of the `json_annotation` package to automatically generate toJson functions for you.
 
+## Dispatching Actions from DevTools
+
+You are able to dispatch actions from the Devtools UI and have these processed by the redux implementation in your Flutter app.
+
+In order for this to work, you need to implement an `ActionDecoder`. ActionDecoder's job is to take the JSON data received from the Devtools UI, and return an action that your reducers know how to use. For example if we dispatch an action:
+
+```json
+{
+  "type": "INCREMENT"
+}
+```
+
+We would implement an ActionDecoder like so:
+
+```dart
+class MyDecoder extends ActionDecoder {
+  dynamic decode(dynamic payload) {
+    final map = payload as Map<String, dynamic>;
+    if (map['type'] == 'INCREMENT') {
+      return IncrementAction();
+    }
+  }
+}
+```
+
+Essentially, you need to map every JSON action type into an action that can be used by your reducers.
+
+Please get in touch if you have any awesome ideas for how to make this process smoother.
+
 # Example Apps
 
 This repo includes remote-devtools enabled versions of the flutter-redux example apps:

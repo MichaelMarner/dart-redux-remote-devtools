@@ -1,5 +1,9 @@
 # Redux Remote Devtools
 
+## 0.0.7
+
+- Add support for receiving remote actions from the Devtools UI. Big thanks to @kadza for helping work through this feature
+
 ## 0.0.6
 
 - Correctly handle the START response message
