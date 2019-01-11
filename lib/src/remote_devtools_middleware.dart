@@ -32,13 +32,17 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
   String _channel;
   RemoteDevToolsStatus status = RemoteDevToolsStatus.notConnected;
 
+  ActionDecoder actionDecoder;
   ActionEncoder actionEncoder;
   StateEncoder stateEncoder;
 
-  RemoteDevToolsMiddleware(this._host,
-      {this.actionEncoder = const JsonActionEncoder(),
-      this.stateEncoder = const JsonStateEncoder(),
-      this.socket}) {
+  RemoteDevToolsMiddleware(
+    this._host, {
+    this.actionDecoder = const NopActionDecoder(),
+    this.actionEncoder = const JsonActionEncoder(),
+    this.stateEncoder = const JsonStateEncoder(),
+    this.socket,
+  }) {
     if (socket == null) {
       this.socket = new SocketClusterWrapper('ws://${this._host}/socketcluster/');
     }
@@ -95,21 +99,35 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
       case 'START':
         _setStatus(RemoteDevToolsStatus.started);
         break;
+      case 'ACTION':
+        _handleRemoteAction(data['action'] as String);
+        break;
       default:
         print('Unknown type:' + data['type'].toString());
     }
   }
 
   void _handleDispatch(dynamic action) {
+    if (this.store == null) {
+      print('No store reference set, cannot dispatch remote action');
+      return;
+    }
     switch (action['type'] as String) {
       case 'JUMP_TO_STATE':
-        if (this.store != null) {
-          this.store.dispatch(new DevToolsAction.jumpToState(action['index'] as int));
-        } else {
-          print('No store reference set, cannot dispatch remote action');
-        }
+        this.store.dispatch(new DevToolsAction.jumpToState(action['index'] as int));
         break;
+      default:
+        print("Unknown commans: ${action['type']}. Ignoring");
     }
+  }
+
+  void _handleRemoteAction(String action) {
+    if (this.store == null) {
+      print('No store reference set, cannot dispatch remote action');
+      return;
+    }
+    var actionMap = jsonDecode(action);
+    this.store.dispatch(new DevToolsAction.perform(this.actionDecoder.decode(actionMap)));
   }
 
   /// Middleware function called by redux, dispatches actions to devtools

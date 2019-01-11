@@ -6,7 +6,8 @@ import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'dart:convert';
 import 'dart:async';
 
+part './src/action_decoder.dart';
 part './src/action_encoder.dart';
+part './src/remote_devtools_middleware.dart';
 part './src/socketcluster_wrapper.dart';
 part './src/state_encoder.dart';
-part './src/remote_devtools_middleware.dart';
