@@ -33,7 +33,8 @@ class GithubApi {
   Future<SearchResult> _fetchResults(String term) async {
     final request = await new HttpClient().getUrl(Uri.parse("$baseUrl$term"));
     final response = await request.close();
-    final results = json.decode(await response.transform(utf8.decoder).join());
+    final results = json.decode(
+        await response.cast<List<int>>().transform(utf8.decoder).join());
 
     return new SearchResult.fromJson(results['items']);
   }
