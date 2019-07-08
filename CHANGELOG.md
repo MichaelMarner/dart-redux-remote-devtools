@@ -1,8 +1,12 @@
 # Redux Remote Devtools
 
+# 0.0.8
+
+- Backwards compatible Update to support changes to Dart API  (thanks @tvolkert)
+
 ## 0.0.7
 
-- Add support for receiving remote actions from the Devtools UI. Big thanks to @kadza for helping work through this feature
+- add support for receiving remote actions from the devtools ui. big thanks to @kadza for helping work through this feature
 
 ## 0.0.6
 
