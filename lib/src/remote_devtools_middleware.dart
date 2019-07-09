@@ -55,12 +55,26 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
     this._channel = await this._login();
     _setStatus(RemoteDevToolsStatus.starting);
     this._relay('START');
+    await this._waitForStart();
     this.socket.on(_channel, (String name, dynamic data) {
       this.handleEventFromRemote(data as Map<String, dynamic>);
     });
     if (this.store != null) {
       this._relay('ACTION', store.state, 'CONNECT');
     }
+  }
+
+  Future<dynamic> _waitForStart() {
+    final c = Completer();
+    this.socket.on(_channel, (String name, dynamic data) {
+      if (data['type'] == "START") {
+        _setStatus(RemoteDevToolsStatus.started);
+        c.complete();
+      } else {
+        c.completeError(data);
+      }
+    });
+    return c.future;
   }
 
   Future<String> _login() {
