@@ -1,5 +1,12 @@
 # Redux Remote Devtools
 
+# 0.0.9
+
+- Resolves an issue where the connect function returned when the http
+  connection was established, instead of after the connect handshake
+  completed. This was causing the first few actions to be missing from
+  devtools. Thanks to @dennis-tra for fixing this.
+
 # 0.0.8
 
 - Backwards compatible Update to support changes to Dart API  (thanks @tvolkert)
