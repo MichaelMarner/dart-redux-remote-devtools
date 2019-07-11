@@ -42,6 +42,10 @@ void main() {
       test('it sends the login message', () async {
         when(socket.connect()).thenAnswer((_) => new Future.value());
         when(socket.id).thenReturn('testId');
+        when(socket.on("data", captureAny)).thenAnswer((Invocation i) {
+          Function fn = i.positionalArguments[1];
+          fn("name", {'type': 'START'});
+        });
         when(socket.emit("login", "master", captureAny)).thenAnswer((Invocation i) {
           Function fn = i.positionalArguments[2];
           fn('testChannel', 'err', 'data');
@@ -55,14 +59,36 @@ void main() {
           fn('testChannel', 'err', 'data');
         });
         when(socket.id).thenReturn('testId');
+        when(socket.on("data", captureAny)).thenAnswer((Invocation i) {
+          Function fn = i.positionalArguments[1];
+          fn("name", {'type': 'START'});
+        });
         connectResponse = await devtools.connect();
-        verify(
-            socket.emit("log", {'type': "START", 'id': 'testId', 'name': 'flutter'}, captureAny));
+        verify(socket.emit("log", {'type': "START", 'id': 'testId', 'name': 'flutter'}, captureAny));
+      });
+      test('it is in STARTED state', () async {
+        when(socket.connect()).thenAnswer((_) => new Future.value());
+        when(socket.id).thenReturn('testId');
+        when(socket.on("data", captureAny)).thenAnswer((Invocation i) {
+          Function fn = i.positionalArguments[1];
+          fn("name", {'type': 'START'});
+        });
+        when(socket.emit("login", "master", captureAny))
+            .thenAnswer((Invocation i) {
+          Function fn = i.positionalArguments[2];
+          fn('testChannel', 'err', 'data');
+        });
+        await devtools.connect();
+        expect(devtools.status, RemoteDevToolsStatus.started);
       });
       test('it sends the state', () async {
         when(socket.emit("login", "master", captureAny)).thenAnswer((Invocation i) {
           Function fn = i.positionalArguments[2];
           fn('testChannel', 'err', 'data');
+        });
+        when(socket.on("data", captureAny)).thenAnswer((Invocation i) {
+          Function fn = i.positionalArguments[1];
+          fn("name", {'type': 'START'});
         });
         when(socket.id).thenReturn('testId');
         var store = MockStore();
@@ -97,12 +123,17 @@ void main() {
           Function fn = i.positionalArguments[2];
           fn('testChannel', 'err', 'data');
         });
+        when(socket.on("data", captureAny)).thenAnswer((Invocation i) {
+          Function fn = i.positionalArguments[1];
+          return fn("name", {'type': 'START'});
+        });
         when(socket.id).thenReturn('testId');
         when(socket.connect()).thenAnswer((_) => new Future.value());
         devtools = RemoteDevToolsMiddleware('example.com', socket: socket);
         await devtools.connect();
       });
       test('nothing sent if status is not started', () {
+        devtools.status = RemoteDevToolsStatus.starting;
         devtools.call(store, TestActions.SomeAction, next.next);
         verifyNever(socket.emit(
             'log',
@@ -148,19 +179,15 @@ void main() {
           Function fn = i.positionalArguments[2];
           fn('testChannel', 'err', 'data');
         });
+        when(socket.on("data", captureAny)).thenAnswer((Invocation i) {
+          Function fn = i.positionalArguments[1];
+          return fn("name", {'type': 'START'});
+        });
         when(socket.id).thenReturn('testId');
         when(socket.connect()).thenAnswer((_) => new Future.value());
         devtools = RemoteDevToolsMiddleware('example.com', socket: socket);
         devtools.store = store;
         await devtools.connect();
-      });
-      test('START response sets status to STARTED', () {
-        var remoteData = {
-          'type': 'START',
-        };
-        expect(devtools.status, RemoteDevToolsStatus.starting);
-        devtools.handleEventFromRemote(remoteData);
-        expect(devtools.status, RemoteDevToolsStatus.started);
       });
       test('handles time travel', () {
         var remoteData = {
