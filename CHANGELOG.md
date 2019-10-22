@@ -1,5 +1,9 @@
 # Redux Remote Devtools
 
+# 0.0.10
+
+- Updates dependency to latest socketcluster_client
+
 # 0.0.9
 
 - Resolves an issue where the connect function returned when the http
