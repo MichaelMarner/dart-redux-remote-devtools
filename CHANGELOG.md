@@ -1,5 +1,10 @@
 # Redux Remote Devtools
 
+# 0.0.11
+
+- Updates dependency to latest socketcluster_client and makes this package work
+  on Flutter mobile again
+
 # 0.0.10
 
 - Updates dependency to latest socketcluster_client
