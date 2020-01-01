@@ -1,5 +1,10 @@
 # Redux Remote Devtools
 
+# 1.0.0
+
+- Allows support for Redux 4.0.0 (backwards compatible with 3)
+- Switching to semver versioning
+
 # 0.0.11
 
 - Updates dependency to latest socketcluster_client and makes this package work
@@ -18,7 +23,7 @@
 
 # 0.0.8
 
-- Backwards compatible Update to support changes to Dart API  (thanks @tvolkert)
+- Backwards compatible Update to support changes to Dart API (thanks @tvolkert)
 
 ## 0.0.7
 
