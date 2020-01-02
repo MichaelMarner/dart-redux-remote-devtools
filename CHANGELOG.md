@@ -1,5 +1,9 @@
 # Redux Remote Devtools
 
+# 1.0.2
+
+- Adds analysis_options.yaml and fixes warnings. No functional changes
+
 # 1.0.1
 
 - Allows use of latest redux_devtools
