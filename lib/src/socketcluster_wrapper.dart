@@ -7,16 +7,16 @@ class SocketClusterWrapper {
   SocketClusterWrapper(this.url, {this.socketFactory = Socket.connect});
 
   Future<void> connect() async {
-    this._socket = await socketFactory(this.url);
+    _socket = await socketFactory(url);
   }
 
   Emitter on(String event, Function func) {
-    return this._socket.on(event, func);
+    return _socket.on(event, func);
   }
 
   void emit(String event, Object data, [AckCall ack]) {
-    this._socket.emit(event, data, ack);
+    _socket.emit(event, data, ack);
   }
 
-  get id => this._socket.id;
+  String get id => _socket.id;
 }

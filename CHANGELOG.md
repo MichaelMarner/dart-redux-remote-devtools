@@ -1,5 +1,10 @@
 # Redux Remote Devtools
 
+# 1.0.1
+
+- Allows use of latest redux_devtools
+- Clean up code to get that pub.dev health rating up
+
 # 1.0.0
 
 - Allows support for Redux 4.0.0 (backwards compatible with 3)

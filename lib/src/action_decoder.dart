@@ -12,6 +12,7 @@ abstract class ActionDecoder {
 class NopActionDecoder extends ActionDecoder {
   const NopActionDecoder() : super();
 
+  @override
   dynamic decode(dynamic action) {
     return action;
   }

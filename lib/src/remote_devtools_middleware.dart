@@ -19,14 +19,14 @@ enum RemoteDevToolsStatus {
 }
 
 class RemoteDevToolsMiddleware extends MiddlewareClass {
-  /**
-   * The remote-devtools server to connect to. Should include
-   * protocol and port if necessary. For example:
-   * 
-   * example.lan:8000
-   * 
-   */
-  String _host;
+  ///
+  /// The remote-devtools server to connect to. Should include
+  /// protocol and port if necessary. For example:
+  ///
+  /// example.lan:8000
+  ///
+  ///
+  final String _host;
   SocketClusterWrapper socket;
   Store store;
   String _channel;
@@ -44,7 +44,7 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
     this.socket,
   }) {
     if (socket == null) {
-      this.socket = new SocketClusterWrapper('ws://${this._host}/socketcluster/');
+      socket = SocketClusterWrapper('ws://$_host/socketcluster/');
     }
   }
 
@@ -79,7 +79,8 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
 
   Future<String> _login() {
     Completer<String> c = new Completer<String>();
-    this.socket.emit('login', 'master', (String name, dynamic error, dynamic data) {
+    this.socket.emit('login', 'master',
+        (String name, dynamic error, dynamic data) {
       c.complete(data as String);
     });
     return c.future;
@@ -92,7 +93,8 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
       try {
         message['payload'] = this.stateEncoder.encode(state);
       } catch (error) {
-        message['payload'] = 'Could not encode state. Ensure state is json encodable';
+        message['payload'] =
+            'Could not encode state. Ensure state is json encodable';
       }
     }
     if (type == 'ACTION') {
@@ -128,7 +130,9 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
     }
     switch (action['type'] as String) {
       case 'JUMP_TO_STATE':
-        this.store.dispatch(new DevToolsAction.jumpToState(action['index'] as int));
+        this
+            .store
+            .dispatch(new DevToolsAction.jumpToState(action['index'] as int));
         break;
       default:
         print("Unknown commans: ${action['type']}. Ignoring");
@@ -141,13 +145,15 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
       return;
     }
     var actionMap = jsonDecode(action);
-    this.store.dispatch(new DevToolsAction.perform(this.actionDecoder.decode(actionMap)));
+    this.store.dispatch(
+        new DevToolsAction.perform(this.actionDecoder.decode(actionMap)));
   }
 
   /// Middleware function called by redux, dispatches actions to devtools
   call(Store store, dynamic action, NextDispatcher next) {
     next(action);
-    if (this.status == RemoteDevToolsStatus.started && !(action is DevToolsAction)) {
+    if (this.status == RemoteDevToolsStatus.started &&
+        !(action is DevToolsAction)) {
       this._relay('ACTION', store.state, action);
     }
   }

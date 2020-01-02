@@ -23,6 +23,7 @@ class JsonActionEncoder extends ActionEncoder {
   ///
   /// Action type is set to be the class name for class based
   /// actions, or an enum value for enum actions
+  @override
   String encode(dynamic action) {
     try {
       return jsonEncode({'type': getActionType(action), 'payload': action});

@@ -13,6 +13,7 @@ class JsonStateEncoder extends StateEncoder {
   const JsonStateEncoder() : super();
 
   /// Encodes a state instance as stringified JSON
+  @override
   String encode(dynamic state) {
     return jsonEncode(state);
   }
