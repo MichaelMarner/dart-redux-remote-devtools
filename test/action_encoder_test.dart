@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:test/test.dart';
-import '../lib/redux_remote_devtools.dart';
+import 'package:redux_remote_devtools/redux_remote_devtools.dart';
 
 class TestAction {
   int value;
   TestAction({this.value});
-  toJson() {
-    return {'value': this.value};
+  Map<String, dynamic> toJson() {
+    return {'value': value};
   }
 }
 
@@ -16,15 +16,15 @@ void main() {
   group('JsonActionEncoder', () {
     group('encodeAction', () {
       test('Returns a jsonified action', () {
-        var encoder = new JsonActionEncoder();
-        var result = encoder.encode(new TestAction(value: 5));
+        var encoder = JsonActionEncoder();
+        var result = encoder.encode(TestAction(value: 5));
         var decoded = jsonDecode(result);
         expect(decoded['type'], equals('TestAction'));
         expect(decoded['payload']['value'], equals(5));
       });
 
       test('Still returns the type if action is not jsonable', () {
-        var encoder = new JsonActionEncoder();
+        var encoder = JsonActionEncoder();
         var result = encoder.encode(EnumActions.SimpleEnumAction);
         var decoded = jsonDecode(result);
         expect(decoded['type'], equals('EnumActions.SimpleEnumAction'));
@@ -34,12 +34,12 @@ void main() {
 
     group('getActionType', () {
       test('Returns the class name for a class based action', () {
-        var encoder = new JsonActionEncoder();
-        var result = encoder.getActionType(new TestAction());
+        var encoder = JsonActionEncoder();
+        var result = encoder.getActionType(TestAction());
         expect(result, equals('TestAction'));
       });
       test('Returns the value for enum actions', () {
-        var encoder = new JsonActionEncoder();
+        var encoder = JsonActionEncoder();
         var result = encoder.getActionType(EnumActions.SimpleEnumAction);
         expect(result, equals('EnumActions.SimpleEnumAction'));
       });

@@ -43,31 +43,29 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
     this.stateEncoder = const JsonStateEncoder(),
     this.socket,
   }) {
-    if (socket == null) {
-      socket = SocketClusterWrapper('ws://$_host/socketcluster/');
-    }
+    socket ??= SocketClusterWrapper('ws://$_host/socketcluster/');
   }
 
-  connect() async {
+  Future<void> connect() async {
     _setStatus(RemoteDevToolsStatus.connecting);
-    await this.socket.connect();
+    await socket.connect();
     _setStatus(RemoteDevToolsStatus.connected);
-    this._channel = await this._login();
+    _channel = await _login();
     _setStatus(RemoteDevToolsStatus.starting);
-    this._relay('START');
-    await this._waitForStart();
-    this.socket.on(_channel, (String name, dynamic data) {
-      this.handleEventFromRemote(data as Map<String, dynamic>);
+    _relay('START');
+    await _waitForStart();
+    socket.on(_channel, (String name, dynamic data) {
+      handleEventFromRemote(data as Map<String, dynamic>);
     });
-    if (this.store != null) {
-      this._relay('ACTION', store.state, 'CONNECT');
+    if (store != null) {
+      _relay('ACTION', store.state, 'CONNECT');
     }
   }
 
   Future<dynamic> _waitForStart() {
     final c = Completer();
-    this.socket.on(_channel, (String name, dynamic data) {
-      if (data['type'] == "START") {
+    socket.on(_channel, (String name, dynamic data) {
+      if (data['type'] == 'START') {
         _setStatus(RemoteDevToolsStatus.started);
         c.complete();
       } else {
@@ -78,32 +76,32 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
   }
 
   Future<String> _login() {
-    Completer<String> c = new Completer<String>();
-    this.socket.emit('login', 'master',
-        (String name, dynamic error, dynamic data) {
+    final c = Completer<String>();
+    socket.emit('login', 'master', (String name, dynamic error, dynamic data) {
       c.complete(data as String);
     });
     return c.future;
   }
 
-  _relay(String type, [Object state, dynamic action, String nextActionId]) {
+  void _relay(String type,
+      [Object state, dynamic action, String nextActionId]) {
     var message = {'type': type, 'id': socket.id, 'name': 'flutter'};
 
     if (state != null) {
       try {
-        message['payload'] = this.stateEncoder.encode(state);
+        message['payload'] = stateEncoder.encode(state);
       } catch (error) {
         message['payload'] =
             'Could not encode state. Ensure state is json encodable';
       }
     }
     if (type == 'ACTION') {
-      message['action'] = this.actionEncoder.encode(action);
+      message['action'] = actionEncoder.encode(action);
       message['nextActionId'] = nextActionId;
     } else if (action != null) {
       message['action'] = action as String;
     }
-    socket.emit(this.socket.id != null ? 'log' : 'log-noid', message);
+    socket.emit(socket.id != null ? 'log' : 'log-noid', message);
   }
 
   void handleEventFromRemote(Map<String, dynamic> data) {
@@ -124,15 +122,13 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
   }
 
   void _handleDispatch(dynamic action) {
-    if (this.store == null) {
+    if (store == null) {
       print('No store reference set, cannot dispatch remote action');
       return;
     }
     switch (action['type'] as String) {
       case 'JUMP_TO_STATE':
-        this
-            .store
-            .dispatch(new DevToolsAction.jumpToState(action['index'] as int));
+        store.dispatch(DevToolsAction.jumpToState(action['index'] as int));
         break;
       default:
         print("Unknown commans: ${action['type']}. Ignoring");
@@ -140,25 +136,24 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
   }
 
   void _handleRemoteAction(String action) {
-    if (this.store == null) {
+    if (store == null) {
       print('No store reference set, cannot dispatch remote action');
       return;
     }
     var actionMap = jsonDecode(action);
-    this.store.dispatch(
-        new DevToolsAction.perform(this.actionDecoder.decode(actionMap)));
+    store.dispatch(DevToolsAction.perform(actionDecoder.decode(actionMap)));
   }
 
   /// Middleware function called by redux, dispatches actions to devtools
-  call(Store store, dynamic action, NextDispatcher next) {
+  @override
+  void call(Store store, dynamic action, NextDispatcher next) {
     next(action);
-    if (this.status == RemoteDevToolsStatus.started &&
-        !(action is DevToolsAction)) {
-      this._relay('ACTION', store.state, action);
+    if (status == RemoteDevToolsStatus.started && !(action is DevToolsAction)) {
+      _relay('ACTION', store.state, action);
     }
   }
 
-  _setStatus(RemoteDevToolsStatus value) {
-    this.status = value;
+  void _setStatus(RemoteDevToolsStatus value) {
+    status = value;
   }
 }
