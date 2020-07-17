@@ -41,11 +41,11 @@ Add the middleware to your Redux configuration:
 
 ## Using remotedev
 
-Use the Javascript [Remote Devtools](https://github.com/zalmoxisus/remotedev-server) package. Start the remotedev server on your machine
+Use the Javascript [redux-devtools-cli](https://github.com/reduxjs/redux-devtools/tree/master/packages/redux-devtools-cli) package. Start the remotedev server on your machine
 
 ```bash
-npm install -g remotedev-server
-remotedev --port 8000
+npm install -g redux-devtools-cli
+redux-devtools --port=8000
 ```
 
 Run your application. It will connect to the remotedev server. You can now debug your redux application by opening up `http://localhost:8000` in a web browser.
