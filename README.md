@@ -12,7 +12,7 @@ Add the library to pubspec.yaml:
 
 ```yaml
 dependencies:
-  redux_remote_devtools: ^0.0.7
+  redux_remote_devtools: ^1.0.1
 ```
 
 ## Middleware configuration
