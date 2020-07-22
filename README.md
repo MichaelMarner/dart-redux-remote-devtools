@@ -29,7 +29,8 @@ Add the middleware to your Redux configuration:
   await remoteDevtools.connect();
 ```
 
-> :warning: **Using Mutliple Middleware?**
+> :warning: **Using mutliple middleware?**
+>
 > If you use other middleware, RemoteDevTools _must_ be put last. Otherwise,
 > actions and state updates will be out of sync
 
