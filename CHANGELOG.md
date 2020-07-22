@@ -3,7 +3,7 @@
 # 1.0.4
 
 - Updates pubspec to get those sweet sweet Pub Points
-_ No functional changes
+- No functional changes
 
 # 1.0.3
 
