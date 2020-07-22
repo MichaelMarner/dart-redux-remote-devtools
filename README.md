@@ -12,7 +12,7 @@ Add the library to pubspec.yaml:
 
 ```yaml
 dependencies:
-  redux_remote_devtools: ^1.0.1
+  redux_remote_devtools: ^1.0.3
 ```
 
 ## Middleware configuration
@@ -28,6 +28,10 @@ Add the middleware to your Redux configuration:
   remoteDevtools.store = store;
   await remoteDevtools.connect();
 ```
+
+> :warning: **Using Mutliple Middleware?**
+> If you use other middleware, RemoteDevTools _must_ be put last. Otherwise,
+> actions and state updates will be out of sync
 
 ### What's going on here?
 
