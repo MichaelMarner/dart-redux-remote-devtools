@@ -31,18 +31,5 @@ void main() {
         expect(decoded['payload'], equals(null));
       });
     });
-
-    group('getActionType', () {
-      test('Returns the class name for a class based action', () {
-        var encoder = JsonActionEncoder;
-        var result = encoder(TestAction());
-        expect(result, equals('TestAction'));
-      });
-      test('Returns the value for enum actions', () {
-        var encoder = JsonActionEncoder;
-        var result = encoder(EnumActions.SimpleEnumAction);
-        expect(result, equals('EnumActions.SimpleEnumAction'));
-      });
-    });
   });
 }
