@@ -1,20 +1,8 @@
 part of redux_remote_devtools;
 
 /// Interface for custom State encoding logic
-abstract class StateEncoder {
-  const StateEncoder();
-
-  // Converts a State instance into a string suitable for sending to devtools
-  String encode(dynamic state);
-}
+/// Converts a State instance into a string suitable for sending to devtools
+typedef StateEncoder<State> = String Function(State state);
 
 /// A State encoder that converts a state instances to stringified JSON
-class JsonStateEncoder extends StateEncoder {
-  const JsonStateEncoder() : super();
-
-  /// Encodes a state instance as stringified JSON
-  @override
-  String encode(dynamic state) {
-    return jsonEncode(state);
-  }
-}
+StateEncoder<dynamic> JsonStateEncoder = (dynamic state) => jsonEncode(state);

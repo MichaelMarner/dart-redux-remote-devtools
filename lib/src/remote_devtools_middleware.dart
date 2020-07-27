@@ -18,7 +18,7 @@ enum RemoteDevToolsStatus {
   started
 }
 
-class RemoteDevToolsMiddleware extends MiddlewareClass {
+class RemoteDevToolsMiddleware<State> extends MiddlewareClass<State> {
   ///
   /// The remote-devtools server to connect to. Should include
   /// protocol and port if necessary. For example:
@@ -28,21 +28,29 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
   ///
   final String _host;
   SocketClusterWrapper socket;
-  Store store;
+  Store<State> store;
   String _channel;
   RemoteDevToolsStatus status = RemoteDevToolsStatus.notConnected;
 
+  /// The function used to decode actions. If not specifies, defaults to [NopActionDecoder]
   ActionDecoder actionDecoder;
+
+  /// The function used to encode actions to a String for sending. If not specifies, defaults to [JsonActionEncoder]
   ActionEncoder actionEncoder;
-  StateEncoder stateEncoder;
+
+  /// The function used to encode state to a String for sending. If not specifies, defaults to [JsonStateEncoder]
+  StateEncoder<State> stateEncoder;
 
   RemoteDevToolsMiddleware(
     this._host, {
-    this.actionDecoder = const NopActionDecoder(),
-    this.actionEncoder = const JsonActionEncoder(),
-    this.stateEncoder = const JsonStateEncoder(),
+    this.actionDecoder,
+    this.actionEncoder,
+    this.stateEncoder,
     this.socket,
   }) {
+    actionEncoder ??= JsonActionEncoder;
+    actionDecoder ??= NopActionDecoder;
+    stateEncoder ??= JsonStateEncoder;
     socket ??= SocketClusterWrapper('ws://$_host/socketcluster/');
   }
 
@@ -89,14 +97,14 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
 
     if (state != null) {
       try {
-        message['payload'] = stateEncoder.encode(state);
+        message['payload'] = stateEncoder(state);
       } catch (error) {
         message['payload'] =
             'Could not encode state. Ensure state is json encodable';
       }
     }
     if (type == 'ACTION') {
-      message['action'] = actionEncoder.encode(action);
+      message['action'] = actionEncoder(action);
       message['nextActionId'] = nextActionId;
     } else if (action != null) {
       message['action'] = action as String;
@@ -141,7 +149,7 @@ class RemoteDevToolsMiddleware extends MiddlewareClass {
       return;
     }
     var actionMap = jsonDecode(action);
-    store.dispatch(DevToolsAction.perform(actionDecoder.decode(actionMap)));
+    store.dispatch(DevToolsAction.perform(actionDecoder(actionMap)));
   }
 
   /// Middleware function called by redux, dispatches actions to devtools
