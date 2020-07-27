@@ -16,16 +16,16 @@ void main() {
   group('JsonActionEncoder', () {
     group('encodeAction', () {
       test('Returns a jsonified action', () {
-        var encoder = JsonActionEncoder();
-        var result = encoder.encode(TestAction(value: 5));
+        var encoder = JsonActionEncoder;
+        var result = encoder(TestAction(value: 5));
         var decoded = jsonDecode(result);
         expect(decoded['type'], equals('TestAction'));
         expect(decoded['payload']['value'], equals(5));
       });
 
       test('Still returns the type if action is not jsonable', () {
-        var encoder = JsonActionEncoder();
-        var result = encoder.encode(EnumActions.SimpleEnumAction);
+        var encoder = JsonActionEncoder;
+        var result = encoder(EnumActions.SimpleEnumAction);
         var decoded = jsonDecode(result);
         expect(decoded['type'], equals('EnumActions.SimpleEnumAction'));
         expect(decoded['payload'], equals(null));
@@ -34,13 +34,13 @@ void main() {
 
     group('getActionType', () {
       test('Returns the class name for a class based action', () {
-        var encoder = JsonActionEncoder();
-        var result = encoder.getActionType(TestAction());
+        var encoder = JsonActionEncoder;
+        var result = encoder(TestAction());
         expect(result, equals('TestAction'));
       });
       test('Returns the value for enum actions', () {
-        var encoder = JsonActionEncoder();
-        var result = encoder.getActionType(EnumActions.SimpleEnumAction);
+        var encoder = JsonActionEncoder;
+        var result = encoder(EnumActions.SimpleEnumAction);
         expect(result, equals('EnumActions.SimpleEnumAction'));
       });
     });

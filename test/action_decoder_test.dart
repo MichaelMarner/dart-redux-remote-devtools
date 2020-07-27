@@ -6,8 +6,8 @@ void main() {
     group('decode', () {
       test('Passes through the json payload', () {
         var payload = {'type': 'SOME ACTION', 'value': 123};
-        var decoder = NopActionDecoder();
-        var result = decoder.decode(payload);
+        var decoder = NopActionDecoder;
+        var result = decoder(payload);
         expect(result, payload);
       });
     });
