@@ -1,4 +1,44 @@
-# Redux Remote Devtools
+# 2.0.0
+
+## Breaking Change
+
+Replaces the abstract classes `StateEncoder`, `ActionEncoder`, and `ActionDecoder` with function typedefs.
+This is inline with the [Dart styleguide](http://dart-lang.github.io/linter/lints/one_member_abstracts.html), which advocates using function typedefs instead of single method abstract classes.
+
+**This will only affect you if you are using custom encoders/decoders. No changes if you are using remote devtools as-is.**
+
+Before:
+
+```dart
+class MyActionEncoder extends ActionEncoder {
+  String encode(dynamic action) {
+    // custom encoding logic here...
+  }
+}
+```
+
+After:
+
+```dart
+ActionEncoder MyActionEncoder = (dynamic action) {
+  // custom encoding logic here
+}
+```
+
+Again, for most people this will require no changes to code.
+
+# 1.0.4
+
+- Updates pubspec to get those sweet sweet Pub Points
+- No functional changes
+
+# 1.0.3
+
+- Updates documentation. No functional changes
+
+# 1.0.2
+
+- Adds analysis_options.yaml and fixes warnings. No functional changes
 
 # 1.0.1
 

@@ -12,7 +12,7 @@ Add the library to pubspec.yaml:
 
 ```yaml
 dependencies:
-  redux_remote_devtools: ^0.0.7
+  redux_remote_devtools: ^2.0.0
 ```
 
 ## Middleware configuration
@@ -28,6 +28,11 @@ Add the middleware to your Redux configuration:
   remoteDevtools.store = store;
   await remoteDevtools.connect();
 ```
+
+> :warning: **Using mutliple middleware?**
+>
+> If you use other middleware, RemoteDevTools _must_ be put last. Otherwise,
+> actions and state updates will be out of sync
 
 ### What's going on here?
 
@@ -102,10 +107,10 @@ For state, we simply attempt to `jsonEncode` the entire thing. If your state can
 
 ### Overriding these strategies
 
-The strategy described above should work for most cases. However, if you want to do something different, you can replace the `ActionEncoder` and `StateEncoder` with your own classes:
+The strategy described above should work for most cases. However, if you want to do something different, you can replace the `ActionEncoder` and `StateEncoder` with your own implementations:
 
 ```dart
-  var remoteDevtools = RemoteDevToolsMiddleware('192.168.1.52:8000', actionEncoder: new MyCoolActionEncoder());
+  var remoteDevtools = RemoteDevToolsMiddleware('192.168.1.52:8000', actionEncoder: MyCoolActionEncoder);
 ```
 
 ## Making your actions and state json encodable
@@ -127,14 +132,12 @@ In order for this to work, you need to implement an `ActionDecoder`. ActionDecod
 We would implement an ActionDecoder like so:
 
 ```dart
-class MyDecoder extends ActionDecoder {
-  dynamic decode(dynamic payload) {
-    final map = payload as Map<String, dynamic>;
-    if (map['type'] == 'INCREMENT') {
-      return IncrementAction();
-    }
+ActionDecoder myDecoder = (dynamic payload) {
+  final map = payload as Map<String, dynamic>;
+  if (map['type'] == 'INCREMENT') {
+    return IncrementAction();
   }
-}
+};
 ```
 
 Essentially, you need to map every JSON action type into an action that can be used by your reducers.

@@ -1,4 +1,4 @@
-import '../lib/redux_remote_devtools.dart';
+import 'package:redux_remote_devtools/redux_remote_devtools.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 import 'dart:async';
@@ -11,7 +11,7 @@ class MockSocket extends Mock implements SocketClusterWrapper {}
 class MockStore extends Mock implements Store {}
 
 class Next {
-  next(action) {}
+  void next(action) {}
 }
 
 enum TestActions { SomeAction, SomeOtherAction }
@@ -22,17 +22,16 @@ void main() {
   group('RemoteDevtoolsMiddleware', () {
     group('constructor', () {
       test('socket is not connected', () {
-        var socket = new MockSocket();
-        new RemoteDevToolsMiddleware('example.com', socket: socket);
+        var socket = MockSocket();
+        RemoteDevToolsMiddleware('example.com', socket: socket);
         verifyNever(socket.connect());
       });
     });
     group('connect', () {
       var socket;
       RemoteDevToolsMiddleware devtools;
-      Future connectResponse;
       setUp(() {
-        socket = new MockSocket();
+        socket = MockSocket();
         devtools = RemoteDevToolsMiddleware('example.com', socket: socket);
       });
       test('it connects the socket', () {
@@ -40,40 +39,43 @@ void main() {
         verify(socket.connect());
       });
       test('it sends the login message', () async {
-        when(socket.connect()).thenAnswer((_) => new Future.value());
+        when(socket.connect()).thenAnswer((_) => Future.value());
         when(socket.id).thenReturn('testId');
-        when(socket.on("data", captureAny)).thenAnswer((Invocation i) {
+        when(socket.on('data', captureAny)).thenAnswer((Invocation i) {
           Function fn = i.positionalArguments[1];
-          fn("name", {'type': 'START'});
+          fn('name', {'type': 'START'});
         });
-        when(socket.emit("login", "master", captureAny)).thenAnswer((Invocation i) {
+        when(socket.emit('login', 'master', captureAny))
+            .thenAnswer((Invocation i) {
           Function fn = i.positionalArguments[2];
           fn('testChannel', 'err', 'data');
         });
         await devtools.connect();
-        verify(socket.emit("login", "master", captureAny));
+        verify(socket.emit('login', 'master', captureAny));
       });
       test('it sends the start message message', () async {
-        when(socket.emit("login", "master", captureAny)).thenAnswer((Invocation i) {
+        when(socket.emit('login', 'master', captureAny))
+            .thenAnswer((Invocation i) {
           Function fn = i.positionalArguments[2];
           fn('testChannel', 'err', 'data');
         });
         when(socket.id).thenReturn('testId');
-        when(socket.on("data", captureAny)).thenAnswer((Invocation i) {
+        when(socket.on('data', captureAny)).thenAnswer((Invocation i) {
           Function fn = i.positionalArguments[1];
-          fn("name", {'type': 'START'});
+          fn('name', {'type': 'START'});
         });
-        connectResponse = await devtools.connect();
-        verify(socket.emit("log", {'type': "START", 'id': 'testId', 'name': 'flutter'}, captureAny));
+        await devtools.connect();
+        verify(socket.emit('log',
+            {'type': 'START', 'id': 'testId', 'name': 'flutter'}, captureAny));
       });
       test('it is in STARTED state', () async {
-        when(socket.connect()).thenAnswer((_) => new Future.value());
+        when(socket.connect()).thenAnswer((_) => Future.value());
         when(socket.id).thenReturn('testId');
-        when(socket.on("data", captureAny)).thenAnswer((Invocation i) {
+        when(socket.on('data', captureAny)).thenAnswer((Invocation i) {
           Function fn = i.positionalArguments[1];
-          fn("name", {'type': 'START'});
+          fn('name', {'type': 'START'});
         });
-        when(socket.emit("login", "master", captureAny))
+        when(socket.emit('login', 'master', captureAny))
             .thenAnswer((Invocation i) {
           Function fn = i.positionalArguments[2];
           fn('testChannel', 'err', 'data');
@@ -82,25 +84,26 @@ void main() {
         expect(devtools.status, RemoteDevToolsStatus.started);
       });
       test('it sends the state', () async {
-        when(socket.emit("login", "master", captureAny)).thenAnswer((Invocation i) {
+        when(socket.emit('login', 'master', captureAny))
+            .thenAnswer((Invocation i) {
           Function fn = i.positionalArguments[2];
           fn('testChannel', 'err', 'data');
         });
-        when(socket.on("data", captureAny)).thenAnswer((Invocation i) {
+        when(socket.on('data', captureAny)).thenAnswer((Invocation i) {
           Function fn = i.positionalArguments[1];
-          fn("name", {'type': 'START'});
+          fn('name', {'type': 'START'});
         });
         when(socket.id).thenReturn('testId');
         var store = MockStore();
         when(store.state).thenReturn('TEST STATE');
         devtools.store = store;
-        connectResponse = await devtools.connect();
-        verify(
-            socket.emit("log", {'type': "START", 'id': 'testId', 'name': 'flutter'}, captureAny));
+        await devtools.connect();
+        verify(socket.emit('log',
+            {'type': 'START', 'id': 'testId', 'name': 'flutter'}, captureAny));
         verify(socket.emit(
-            "log",
+            'log',
             {
-              'type': "ACTION",
+              'type': 'ACTION',
               'id': 'testId',
               'name': 'flutter',
               'payload': '"TEST STATE"',
@@ -113,22 +116,23 @@ void main() {
     group('call', () {
       SocketClusterWrapper socket;
       RemoteDevToolsMiddleware devtools;
-      Next next = new MockNext();
+      Next next = MockNext();
       Store store;
       setUp(() async {
-        store = new MockStore();
+        store = MockStore();
         when(store.state).thenReturn({'state': 42});
-        socket = new MockSocket();
-        when(socket.emit("login", "master", captureAny)).thenAnswer((Invocation i) {
+        socket = MockSocket();
+        when(socket.emit('login', 'master', captureAny))
+            .thenAnswer((Invocation i) {
           Function fn = i.positionalArguments[2];
           fn('testChannel', 'err', 'data');
         });
-        when(socket.on("data", captureAny)).thenAnswer((Invocation i) {
+        when(socket.on('data', captureAny)).thenAnswer((Invocation i) {
           Function fn = i.positionalArguments[1];
-          return fn("name", {'type': 'START'});
+          return fn('name', {'type': 'START'});
         });
         when(socket.id).thenReturn('testId');
-        when(socket.connect()).thenAnswer((_) => new Future.value());
+        when(socket.connect()).thenAnswer((_) => Future.value());
         devtools = RemoteDevToolsMiddleware('example.com', socket: socket);
         await devtools.connect();
       });
@@ -172,19 +176,20 @@ void main() {
       RemoteDevToolsMiddleware devtools;
       Store store;
       setUp(() async {
-        store = new MockStore();
+        store = MockStore();
         when(store.state).thenReturn({'state': 42});
-        socket = new MockSocket();
-        when(socket.emit("login", "master", captureAny)).thenAnswer((Invocation i) {
+        socket = MockSocket();
+        when(socket.emit('login', 'master', captureAny))
+            .thenAnswer((Invocation i) {
           Function fn = i.positionalArguments[2];
           fn('testChannel', 'err', 'data');
         });
-        when(socket.on("data", captureAny)).thenAnswer((Invocation i) {
+        when(socket.on('data', captureAny)).thenAnswer((Invocation i) {
           Function fn = i.positionalArguments[1];
-          return fn("name", {'type': 'START'});
+          return fn('name', {'type': 'START'});
         });
         when(socket.id).thenReturn('testId');
-        when(socket.connect()).thenAnswer((_) => new Future.value());
+        when(socket.connect()).thenAnswer((_) => Future.value());
         devtools = RemoteDevToolsMiddleware('example.com', socket: socket);
         devtools.store = store;
         await devtools.connect();
@@ -195,13 +200,16 @@ void main() {
           'action': {'type': 'JUMP_TO_STATE', 'index': 4}
         };
         devtools.handleEventFromRemote(remoteData);
-        verify(store.dispatch(new DevToolsAction.jumpToState(4)));
+        verify(store.dispatch(DevToolsAction.jumpToState(4)));
       });
       test('Dispatches arbitrary remote actions', () {
-        var remoteData = {'type': 'ACTION', 'action': '{"type": "TEST ACTION", "value": 12}'};
+        var remoteData = {
+          'type': 'ACTION',
+          'action': '{"type": "TEST ACTION", "value": 12}'
+        };
         devtools.handleEventFromRemote(remoteData);
         print(jsonDecode(remoteData['action']));
-        var expected = new DevToolsAction.perform(jsonDecode(remoteData['action']));
+        var expected = DevToolsAction.perform(jsonDecode(remoteData['action']));
         print(expected);
         var verifyResult = verify(store.dispatch(captureAny)).captured.first;
         expect(verifyResult.type, DevToolsActionTypes.PerformAction);
@@ -214,7 +222,8 @@ void main() {
           'type': 'DISPATCH',
           'action': {'type': 'JUMP_TO_STATE', 'index': 4}
         };
-        expect(() => devtools.handleEventFromRemote(remoteData), returnsNormally);
+        expect(
+            () => devtools.handleEventFromRemote(remoteData), returnsNormally);
       });
     });
   });
