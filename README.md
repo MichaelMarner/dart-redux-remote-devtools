@@ -29,7 +29,7 @@ Add the middleware to your Redux configuration:
   await remoteDevtools.connect();
 ```
 
-> :warning: **Using mutliple middleware?**
+> :warning: **Using multiple middleware?**
 >
 > If you use other middleware, RemoteDevTools _must_ be put last. Otherwise,
 > actions and state updates will be out of sync
@@ -44,16 +44,16 @@ Add the middleware to your Redux configuration:
 
 1. The middleware needs a reference to the store you just created, so commands from devtools can be dispatched. So as a final step, set the reference.
 
-## Using remotedev
+## Using redux-devtools
 
-Use the Javascript [redux-devtools-cli](https://github.com/reduxjs/redux-devtools/tree/master/packages/redux-devtools-cli) package. Start the remotedev server on your machine
+Use the Javascript [redux-devtools-cli](https://github.com/reduxjs/redux-devtools/tree/master/packages/redux-devtools-cli) package. Start the redux-devtools server on your machine
 
 ```bash
 npm install -g redux-devtools-cli
-redux-devtools --port=8000
+redux-devtools --hostname=localhost --port=8000 --open
 ```
 
-Run your application. It will connect to the remotedev server. You can now debug your redux application by opening up `http://localhost:8000` in a web browser.
+Run your application. It will connect to the redux-devtools server. You can now debug your redux application with the Redux DevTools window.
 
 ## Encoding Actions and State
 
