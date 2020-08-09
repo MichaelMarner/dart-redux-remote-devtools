@@ -21,7 +21,7 @@ Add the middleware to your Redux configuration:
 
 ```dart
   var remoteDevtools = RemoteDevToolsMiddleware('192.168.1.52:8000');
-  final store = new DevToolsStore<AppState>(searchReducer,
+  final store = DevToolsStore<AppState>(searchReducer,
       middleware: [
         remoteDevtools,
       ]);
@@ -50,8 +50,12 @@ Use the Javascript [redux-devtools-cli](https://github.com/reduxjs/redux-devtool
 
 ```bash
 npm install -g redux-devtools-cli
-redux-devtools --hostname=localhost --port=8000 --open
+redux-devtools --open
 ```
+
+In the Redux DevTools window select `Settings`... `Connection`... `use local (custom) server` and click `Connect`.
+
+<img width="404" alt="Screen Shot 2020-08-09 at 6 01 30 pm" src="https://user-images.githubusercontent.com/1059276/89727743-f92bb080-da6a-11ea-92d6-d36c0629ff69.png">
 
 Run your application. It will connect to the redux-devtools server. You can now debug your redux application with the Redux DevTools window.
 
