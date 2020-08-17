@@ -68,6 +68,23 @@ void main() {
         verify(socket.emit('log',
             {'type': 'START', 'id': 'testId', 'name': 'flutter'}, captureAny));
       });
+      test('instance name is configurable', () async {
+        final coolInstanceName = 'testName';
+        devtools = RemoteDevToolsMiddleware('example.com', socket: socket, instanceName: coolInstanceName);
+        when(socket.emit('login', 'master', captureAny))
+            .thenAnswer((Invocation i) {
+          Function fn = i.positionalArguments[2];
+          fn('testChannel', 'err', 'data');
+        });
+        when(socket.id).thenReturn('testId');
+        when(socket.on('data', captureAny)).thenAnswer((Invocation i) {
+          Function fn = i.positionalArguments[1];
+          fn('name', {'type': 'START'});
+        });
+        await devtools.connect();
+        verify(socket.emit('log',
+            {'type': 'START', 'id': 'testId', 'name': '$coolInstanceName'}, captureAny));
+      });
       test('it is in STARTED state', () async {
         when(socket.connect()).thenAnswer((_) => Future.value());
         when(socket.id).thenReturn('testId');
