@@ -41,17 +41,22 @@ class RemoteDevToolsMiddleware<State> extends MiddlewareClass<State> {
   /// The function used to encode state to a String for sending. If not specifies, defaults to [JsonStateEncoder]
   StateEncoder<State> stateEncoder;
 
+  /// The name that will appear in Instance Name in Dev Tools. If not specified, default to 'flutter'.
+  String instanceName;
+
   RemoteDevToolsMiddleware(
     this._host, {
     this.actionDecoder,
     this.actionEncoder,
     this.stateEncoder,
     this.socket,
+    this.instanceName,
   }) {
     actionEncoder ??= JsonActionEncoder;
     actionDecoder ??= NopActionDecoder;
     stateEncoder ??= JsonStateEncoder;
     socket ??= SocketClusterWrapper('ws://$_host/socketcluster/');
+    instanceName ??= 'flutter';
   }
 
   Future<void> connect() async {
@@ -93,7 +98,7 @@ class RemoteDevToolsMiddleware<State> extends MiddlewareClass<State> {
 
   void _relay(String type,
       [Object state, dynamic action, String nextActionId]) {
-    var message = {'type': type, 'id': socket.id, 'name': 'flutter'};
+    var message = {'type': type, 'id': socket.id, 'name': instanceName};
 
     if (state != null) {
       try {
