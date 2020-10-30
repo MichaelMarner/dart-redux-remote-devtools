@@ -40,7 +40,7 @@ Add the middleware to your Redux configuration:
 
 1. Wait for devtools to connect to the remotedev server
 
-1. Initialise your store. To take advantage of time travel, you should use a [DevToolsStore](https://pub.dartlang.org/packages/redux_dev_tools). Pass in remoteDevTools with the rest of your middlware
+1. Initialise your store. To take advantage of time travel, you should use a [DevToolsStore](https://pub.dev/packages/redux_dev_tools). Pass in remoteDevTools with the rest of your middlware
 
 1. The middleware needs a reference to the store you just created, so commands from devtools can be dispatched. So as a final step, set the reference.
 
@@ -99,7 +99,7 @@ Would appear in devtools as:
 }
 ```
 
-This of course means your Actions need to be json encodable. You can do what the example above does and write your own `toJson` method. However, a better approach is to use a generator like [json_serializable](https://pub.dartlang.org/packages/json_serializable) to do it for you. If your action is not json encodable, the payload property will be missing in devtools.
+This of course means your Actions need to be json encodable. You can do what the example above does and write your own `toJson` method. However, a better approach is to use a generator like [json_serializable](https://pub.dev/packages/json_serializable) to do it for you. If your action is not json encodable, the payload property will be missing in devtools.
 
 ### Encoding strategy for State
 
