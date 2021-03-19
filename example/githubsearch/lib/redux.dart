@@ -69,8 +69,8 @@ SearchState _onResult(SearchState state, SearchResultAction action) =>
 class SearchMiddleware implements MiddlewareClass<SearchState> {
   final GithubApi api;
 
-  Timer _timer;
-  CancelableOperation<Store<SearchState>> _operation;
+  Timer? _timer;
+  CancelableOperation<Store<SearchState>>? _operation;
 
   SearchMiddleware(this.api);
 
@@ -83,7 +83,7 @@ class SearchMiddleware implements MiddlewareClass<SearchState> {
 
       // Don't start searching until the user pauses for 250ms. This will stop
       // us from over-fetching from our backend.
-      _timer = new Timer(new Duration(milliseconds: 250), () {
+      _timer = Timer(Duration(milliseconds: 250), () {
         store.dispatch(SearchLoadingAction());
 
         // Instead of a simple Future, we'll use a CancellableOperation from the
@@ -117,11 +117,11 @@ class SearchEpic implements EpicClass<SearchState> {
 
   @override
   Stream<dynamic> call(Stream<dynamic> actions, EpicStore<SearchState> store) {
-    return Observable(actions)
+    return actions
         // Narrow down to SearchAction actions
-        .ofType(TypeToken<SearchAction>())
+        .whereType<SearchAction>()
         // Don't start searching until the user pauses for 250ms
-        .debounce(new Duration(milliseconds: 250))
+        .debounceTime(Duration(milliseconds: 250))
         // Cancel the previous search and start a new one with switchMap
         .switchMap((action) => _search(action.term));
   }

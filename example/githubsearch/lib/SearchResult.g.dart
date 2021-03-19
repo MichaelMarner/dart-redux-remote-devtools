@@ -7,21 +7,50 @@ part of 'SearchResult.dart';
 // **************************************************************************
 
 SearchResult _$SearchResultFromJson(Map<String, dynamic> json) {
-  return new SearchResult(
-      $enumDecodeNullable(
-          'SearchResultKind', SearchResultKind.values, json['kind'] as String),
-      (json['items'] as List)
-          ?.map((e) => e == null
-              ? null
-              : new SearchResultItem.fromJson(e as Map<String, Object>))
-          ?.toList());
+  return SearchResult(
+    _$enumDecode(_$SearchResultKindEnumMap, json['kind']),
+    (json['items'] as List<dynamic>)
+        .map((e) => SearchResultItem.fromJson((e as Map<String, dynamic>).map(
+              (k, e) => MapEntry(k, e as Object),
+            )))
+        .toList(),
+  );
 }
 
-abstract class _$SearchResultSerializerMixin {
-  SearchResultKind get kind;
-  List<SearchResultItem> get items;
-  Map<String, dynamic> toJson() => <String, dynamic>{
-        'kind': kind?.toString()?.split('.')?.last,
-        'items': items
-      };
+Map<String, dynamic> _$SearchResultToJson(SearchResult instance) =>
+    <String, dynamic>{
+      'kind': _$SearchResultKindEnumMap[instance.kind],
+      'items': instance.items,
+    };
+
+K _$enumDecode<K, V>(
+  Map<K, V> enumValues,
+  Object? source, {
+  K? unknownValue,
+}) {
+  if (source == null) {
+    throw ArgumentError(
+      'A value must be provided. Supported values: '
+      '${enumValues.values.join(', ')}',
+    );
+  }
+
+  return enumValues.entries.singleWhere(
+    (e) => e.value == source,
+    orElse: () {
+      if (unknownValue == null) {
+        throw ArgumentError(
+          '`$source` is not one of the supported values: '
+          '${enumValues.values.join(', ')}',
+        );
+      }
+      return MapEntry(unknownValue, enumValues.values.first);
+    },
+  ).key;
 }
+
+const _$SearchResultKindEnumMap = {
+  SearchResultKind.noTerm: 'noTerm',
+  SearchResultKind.empty: 'empty',
+  SearchResultKind.populated: 'populated',
+};

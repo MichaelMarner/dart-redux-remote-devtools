@@ -66,7 +66,7 @@ class RemoteDevToolsMiddleware<State> extends MiddlewareClass<State> {
     _setStatus(RemoteDevToolsStatus.starting);
     _relay('START');
     await _waitForStart();
-    socket.on(_channel, (String name, dynamic data) {
+    socket.on(_channel, (String? name, dynamic data) {
       handleEventFromRemote(data as Map<String, dynamic>);
     });
     if (store != null) {
@@ -76,7 +76,7 @@ class RemoteDevToolsMiddleware<State> extends MiddlewareClass<State> {
 
   Future<dynamic> _waitForStart() {
     final c = Completer();
-    socket.on(_channel, (String name, dynamic data) {
+    socket.on(_channel, (String? name, dynamic data) {
       if (data['type'] == 'START') {
         _setStatus(RemoteDevToolsStatus.started);
         c.complete();

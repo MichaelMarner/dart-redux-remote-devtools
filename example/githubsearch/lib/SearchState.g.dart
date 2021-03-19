@@ -7,21 +7,16 @@ part of 'SearchState.dart';
 // **************************************************************************
 
 SearchState _$SearchStateFromJson(Map<String, dynamic> json) {
-  return new SearchState(
-      result: json['result'] == null
-          ? null
-          : new SearchResult.fromJson(json['result']),
-      hasError: json['hasError'] as bool,
-      isLoading: json['isLoading'] as bool);
+  return SearchState(
+    result: SearchResult.fromJson(json['result']),
+    hasError: json['hasError'] as bool,
+    isLoading: json['isLoading'] as bool,
+  );
 }
 
-abstract class _$SearchStateSerializerMixin {
-  SearchResult get result;
-  bool get hasError;
-  bool get isLoading;
-  Map<String, dynamic> toJson() => <String, dynamic>{
-        'result': result,
-        'hasError': hasError,
-        'isLoading': isLoading
-      };
-}
+Map<String, dynamic> _$SearchStateToJson(SearchState instance) =>
+    <String, dynamic>{
+      'result': instance.result,
+      'hasError': instance.hasError,
+      'isLoading': instance.isLoading,
+    };
