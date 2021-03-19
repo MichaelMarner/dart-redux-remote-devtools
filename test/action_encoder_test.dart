@@ -3,7 +3,7 @@ import 'package:test/test.dart';
 import 'package:redux_remote_devtools/redux_remote_devtools.dart';
 
 class TestAction {
-  int value;
+  int? value;
   TestAction({this.value});
   Map<String, dynamic> toJson() {
     return {'value': value};

@@ -1,17 +1,16 @@
+import 'package:mockito/annotations.dart';
 import 'package:test/test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:socketcluster_client/socketcluster_client.dart';
 import 'dart:async';
 import 'package:redux_remote_devtools/redux_remote_devtools.dart';
+import 'socketcluster_wrapper_test.mocks.dart';
 
-class SocketFactory {
-  void connect(String url) {}
+abstract class SocketFactory {
+  Future<Socket> connect(String url);
 }
 
-class MockFactory extends Mock implements SocketFactory {}
-
-class MockSocket extends Mock implements Socket {}
-
+@GenerateMocks([Socket, SocketFactory])
 void main() {
   group('SocketClusterWrapper', () {
     group('Constructor', () {
@@ -20,7 +19,7 @@ void main() {
         expect(wrapper.url, 'ws://example.com');
       });
       test('Does not attempt to connect', () {
-        var factory = MockFactory();
+        var factory = MockSocketFactory();
         SocketClusterWrapper('ws://example.com',
             socketFactory: factory.connect);
         verifyNever(factory.connect(captureAny));
@@ -29,8 +28,11 @@ void main() {
 
     group('connect', () {
       test('It calls connect with the correct URL', () {
-        var factory = MockFactory();
-        var socket = SocketClusterWrapper('ws://example.com',
+        final factory = MockSocketFactory();
+        final s = MockSocket();
+        when(factory.connect('ws://example.com'))
+            .thenAnswer((_) => Future.value(s));
+        final socket = SocketClusterWrapper('ws://example.com',
             socketFactory: factory.connect);
         socket.connect();
         verify(factory.connect('ws://example.com'));
@@ -40,6 +42,7 @@ void main() {
     group('on', () {
       test('It passes the args through', () async {
         var socket = MockSocket();
+        when(socket.on('testEvent', any)).thenReturn(Emitter());
         var wrapper = SocketClusterWrapper('ws://example.com',
             socketFactory: (String s) => Future.value(socket));
         var testFunc = () => 'asf';
@@ -52,6 +55,7 @@ void main() {
     group('emit', () {
       test('It passes the args through', () async {
         var socket = MockSocket();
+        when(socket.emit('event', 'data', any)).thenReturn(socket);
         var wrapper = SocketClusterWrapper('ws://example.com',
             socketFactory: (String s) => Future.value(socket));
         var testFunc = (String s, dynamic err, dynamic data) => 'asf';

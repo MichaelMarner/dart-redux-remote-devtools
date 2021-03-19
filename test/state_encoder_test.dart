@@ -3,7 +3,7 @@ import 'package:test/test.dart';
 import 'package:redux_remote_devtools/redux_remote_devtools.dart';
 
 class TestState {
-  int value;
+  int? value;
   TestState({this.value});
   Map<String, dynamic> toJson() {
     return {'value': value};
@@ -11,7 +11,7 @@ class TestState {
 }
 
 class TestUnencodableState {
-  int value;
+  int? value;
   TestUnencodableState({this.value});
 }
 
