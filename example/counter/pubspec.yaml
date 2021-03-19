@@ -5,7 +5,7 @@ publish_to: none
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.0.0-dev.68.0 <3.0.0'
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -14,7 +14,7 @@ dependencies:
   redux_dev_tools:
     git:
       url: https://github.com/MichaelMarner/redux_dev_tools.git
-      ref: null-safety 
+      ref: null-safety
   redux_remote_devtools:
     path: ../../
 

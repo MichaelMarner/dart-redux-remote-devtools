@@ -38,7 +38,8 @@ class FlutterReduxApp extends StatelessWidget {
   final Store<int> store;
   final String title;
 
-  FlutterReduxApp({Key key, this.store, this.title}) : super(key: key);
+  FlutterReduxApp({Key? key, required this.store, required this.title})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +81,7 @@ class FlutterReduxApp extends StatelessWidget {
                   builder: (context, count) {
                     return new Text(
                       count,
-                      style: Theme.of(context).textTheme.display1,
+                      style: Theme.of(context).textTheme.headline4,
                     );
                   },
                 )
