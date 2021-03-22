@@ -5,12 +5,12 @@ import './SearchResult.dart';
 
 class GithubApi {
   final String baseUrl;
-  final Map<String, SearchResult> cache;
-  final HttpClient client;
+  late final Map<String, SearchResult> cache;
+  late final HttpClient client;
 
   GithubApi({
-    HttpClient client,
-    Map<String, SearchResult> cache,
+    HttpClient? client,
+    Map<String, SearchResult>? cache,
     this.baseUrl = "https://api.github.com/search/repositories?q=",
   })  : this.client = client ?? new HttpClient(),
         this.cache = cache ?? <String, SearchResult>{};
@@ -20,7 +20,7 @@ class GithubApi {
     if (term.isEmpty) {
       return new SearchResult.noTerm();
     } else if (cache.containsKey(term)) {
-      return cache[term];
+      return cache[term]!;
     } else {
       final result = await _fetchResults(term);
 
@@ -52,11 +52,11 @@ class SearchResultItem {
 
   SearchResultItem(this.fullName, this.url, this.avatarUrl);
 
-  factory SearchResultItem.fromJson(Map<String, Object> json) {
+  factory SearchResultItem.fromJson(Map<String, dynamic> json) {
     return new SearchResultItem(
       json['full_name'] as String,
       json["html_url"] as String,
-      (json["owner"] as Map<String, Object>)["avatar_url"] as String,
+      (json["owner"] as Map<String, dynamic>)["avatar_url"] as String,
     );
   }
 }

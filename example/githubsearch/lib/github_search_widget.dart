@@ -9,7 +9,7 @@ import 'search_result_widget.dart';
 import './SearchState.dart';
 
 class SearchScreen extends StatelessWidget {
-  SearchScreen({Key key}) : super(key: key);
+  SearchScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -76,5 +76,5 @@ class SearchScreenViewModel {
   final SearchState state;
   final void Function(String term) onTextChanged;
 
-  SearchScreenViewModel({this.state, this.onTextChanged});
+  SearchScreenViewModel({required this.state, required this.onTextChanged});
 }

@@ -3,7 +3,7 @@ import 'github_search_api.dart';
 import './SearchResult.dart';
 
 class SearchResultWidget extends StatelessWidget {
-  final SearchResult result;
+  final SearchResult? result;
 
   SearchResultWidget(this.result);
 
@@ -11,11 +11,11 @@ class SearchResultWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return new AnimatedOpacity(
       duration: new Duration(milliseconds: 300),
-      opacity: result != null && result.isPopulated ? 1.0 : 0.0,
+      opacity: result != null && result!.isPopulated ? 1.0 : 0.0,
       child: new ListView.builder(
         itemCount: result?.items?.length ?? 0,
         itemBuilder: (context, index) {
-          final item = result.items[index];
+          final item = result!.items[index];
           return new InkWell(
             onTap: () => showItem(context, item),
             child: new Container(
@@ -85,7 +85,7 @@ class SearchResultWidget extends StatelessWidget {
       new MaterialPageRoute<Null>(
         builder: (BuildContext context) {
           return new Scaffold(
-            resizeToAvoidBottomPadding: false,
+            resizeToAvoidBottomInset: false,
             body: new GestureDetector(
               key: new Key(item.avatarUrl),
               onTap: () => Navigator.pop(context),

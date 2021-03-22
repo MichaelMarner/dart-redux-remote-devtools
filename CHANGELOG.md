@@ -1,3 +1,11 @@
+# 3.0.0
+
+## Sound Null Safety
+
+This release migrates Remote DevTools to Dart's new null safety. The changes are mostly internal, so this new release should slot into your previous code, once you have migrated your project to null safety.o
+
+Note that going forward I will not be doing fixes or new features on the 2.x branch - Null Safety is the Future.
+
 # 2.0.0
 
 ## Breaking Change

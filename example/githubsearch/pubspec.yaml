@@ -10,29 +10,32 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.0.0-dev.68.0 <3.0.0'
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  flutter_redux: 0.5.0
-  redux_dev_tools: ^0.4.0
-  async: ^2.0.7
-  redux_epics: 0.10.2
-  rxdart: ^0.18.1
-  json_annotation: ^0.2.3
+  flutter_redux: ^0.8.2
+  redux_dev_tools:
+    git:
+      url: https://github.com/MichaelMarner/redux_dev_tools.git
+      ref: null-safety
+  async: ^2.5.0
+  redux_epics: ^0.15.0
+  rxdart: ^0.26.0
+  json_annotation: ^4.0.0
   redux_remote_devtools:
     path: ../../
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^0.1.2
+  cupertino_icons: ^1.0.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: ^0.9.0
-  json_serializable: ^0.5.4
+  build_runner: ^1.12.2
+  json_serializable: ^4.0.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

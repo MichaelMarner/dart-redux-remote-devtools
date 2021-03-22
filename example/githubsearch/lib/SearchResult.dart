@@ -4,7 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'SearchResult.g.dart';
 
 @JsonSerializable()
-class SearchResult extends Object with _$SearchResultSerializerMixin {
+class SearchResult {
   final SearchResultKind kind;
   final List<SearchResultItem> items;
 
@@ -15,8 +15,8 @@ class SearchResult extends Object with _$SearchResultSerializerMixin {
 
   factory SearchResult.fromJson(dynamic json) {
     final items = (json as List)
-        .cast<Map<String, Object>>()
-        .map((Map<String, Object> item) {
+        .cast<Map<String, dynamic>>()
+        .map((Map<String, dynamic> item) {
       return new SearchResultItem.fromJson(item);
     }).toList();
 
@@ -25,6 +25,7 @@ class SearchResult extends Object with _$SearchResultSerializerMixin {
       items,
     );
   }
+  Map<String, dynamic> toJson() => _$SearchResultToJson(this);
 
   bool get isPopulated => kind == SearchResultKind.populated;
 
