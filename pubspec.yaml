@@ -2,7 +2,7 @@ name: redux_remote_devtools
 description: Remote DevTools for Redux.dart. This package connects a Dart Redux store to the Remote Devtools Server, allowing the developer to inspect changes to the Redux Store during runtime.
 author: Michael Marner <michael@20papercups.net>
 homepage: https://github.com/MichaelMarner/dart-redux-remote-devtools
-version: 2.0.0
+version: 3.0.0
 dependencies:
   redux: ^5.0.0
   redux_dev_tools: ^0.7.0
