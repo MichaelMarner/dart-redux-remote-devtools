@@ -33,7 +33,7 @@ class RemoteDevToolsMiddleware<State> extends MiddlewareClass<State> {
   RemoteDevToolsStatus status = RemoteDevToolsStatus.notConnected;
 
   /// The function used to decode actions. If not specifies, defaults to [NopActionDecoder]
-  late ActionDecoder /*late*/ actionDecoder;
+  late ActionDecoder actionDecoder;
 
   /// The function used to encode actions to a String for sending. If not specifies, defaults to [JsonActionEncoder]
   late ActionEncoder actionEncoder;
