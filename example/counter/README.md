@@ -10,13 +10,13 @@ This is a copy of the example program from [flutter_redux](https://github.com/br
 
 ## Trying it out
 
-1.  Get [remotedev-server](https://github.com/zalmoxisus/remotedev-server) from npm:
+1.  Get [redux-devtools-cli](https://github.com/reduxjs/redux-devtools/tree/master/packages/redux-devtools-cli) from npm:
 
-        npm install -g remotedev-server
+        npm install -g redux-devtools-cli
 
 2.  Start the server
 
-        remotedev --port 8000
+        redux-devtools --port=8000
 
 3.  Edit `main.dart` and put in your computer's IP address or host name
 

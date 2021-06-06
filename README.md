@@ -21,7 +21,7 @@ Add the middleware to your Redux configuration:
 
 ```dart
   var remoteDevtools = RemoteDevToolsMiddleware('192.168.1.52:8000');
-  final store = new DevToolsStore<AppState>(searchReducer,
+  final store = DevToolsStore<AppState>(searchReducer,
       middleware: [
         remoteDevtools,
       ]);
@@ -29,7 +29,7 @@ Add the middleware to your Redux configuration:
   await remoteDevtools.connect();
 ```
 
-> :warning: **Using mutliple middleware?**
+> :warning: **Using multiple middleware?**
 >
 > If you use other middleware, RemoteDevTools _must_ be put last. Otherwise,
 > actions and state updates will be out of sync
@@ -44,16 +44,20 @@ Add the middleware to your Redux configuration:
 
 1. The middleware needs a reference to the store you just created, so commands from devtools can be dispatched. So as a final step, set the reference.
 
-## Using remotedev
+## Using redux-devtools
 
-Use the Javascript [Remote Devtools](https://github.com/zalmoxisus/remotedev-server) package. Start the remotedev server on your machine
+Use the Javascript [redux-devtools-cli](https://github.com/reduxjs/redux-devtools/tree/master/packages/redux-devtools-cli) package. Start the redux-devtools server on your machine
 
 ```bash
-npm install -g remotedev-server
-remotedev --port 8000
+npm install -g redux-devtools-cli
+redux-devtools --open
 ```
 
-Run your application. It will connect to the remotedev server. You can now debug your redux application by opening up `http://localhost:8000` in a web browser.
+In the Redux DevTools window select `Settings`... `Connection`... `use local (custom) server` and click `Connect`.
+
+<img width="404" alt="Screen Shot 2020-08-09 at 6 01 30 pm" src="https://user-images.githubusercontent.com/1059276/89727743-f92bb080-da6a-11ea-92d6-d36c0629ff69.png">
+
+Run your application. It will connect to the redux-devtools server. You can now debug your redux application with the Redux DevTools window.
 
 ## Encoding Actions and State
 
